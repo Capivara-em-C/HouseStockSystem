@@ -13,18 +13,6 @@ class LimiteAbstrato(ABC):
     def __init__(self, dado=None):
         self.dado = dado
 
-    @property
-    def dado(self):
-        return self.__dado
-
-    @dado.setter
-    def dado(self, dado):
-        if isinstance(dado, self.classe_dado()) or dado is None:
-            self.__dado = dado
-            return
-
-        raise Exception("Dado passado não é uma instancia de " + self.classe_dado().__name__)
-
     @staticmethod
     def classe_dado():
         return dict
@@ -40,12 +28,14 @@ class LimiteAbstrato(ABC):
         pass
 
     def erro(self, mensagem):
-        print("\n\n\n\n\n")
+        print("\n\n")
         print(self.CUSTOMIZACAO_CONSOLE["BACKGROUND_VERMELHA"])
+        print("============================================================\n")
         print(self.CUSTOMIZACAO_CONSOLE["LETRA_BRANCA"])
-        print("\nERRO: \n  ", mensagem, "\n\n")
+        print("ERRO: \n\n  ", mensagem, "\n")
+        print("============================================================")
         print(self.CUSTOMIZACAO_CONSOLE["DEFAULT"])
-        print("\n\n\n")
+        print("\n\n")
 
     def listar(self, **filtros):
         raise Exception("Método [Listar] não permitido para este limite[%s]".format(self.__class__.__name__))
@@ -58,3 +48,15 @@ class LimiteAbstrato(ABC):
 
     def deletar(self, **filtros):
         raise Exception("Método [Deletar] não permitido para este limite[%s]".format(self.__class__.__name__))
+
+    @property
+    def dado(self):
+        return self.__dado
+
+    @dado.setter
+    def dado(self, dado):
+        if isinstance(dado, self.classe_dado()) or dado is None:
+            self.__dado = dado
+            return
+
+        raise Exception("Dado passado não é uma instancia de " + self.classe_dado().__name__)
