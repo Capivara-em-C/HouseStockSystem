@@ -1,0 +1,4 @@
+
+
+class RotaInexistenteException(Exception):
+    pass
