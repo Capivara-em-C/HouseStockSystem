@@ -2,7 +2,7 @@ from abc import ABC
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.limite.limite_abstrato import LimiteAbstrato
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
-from app.source.helpers.setter import validacao_setter
+from app.source.helpers.setter import validacao_tipo
 
 
 class ControleAbstrato(ABC):
@@ -70,7 +70,7 @@ class ControleAbstrato(ABC):
 
     @entidade.setter
     def entidade(self, entidade: EntidadeAbstrata or None = None):
-        validacao_setter(entidade, self.classe_entidade())
+        validacao_tipo(entidade, self.classe_entidade())
         self.__entidade = entidade
 
     @staticmethod
@@ -83,5 +83,5 @@ class ControleAbstrato(ABC):
 
     @limite.setter
     def limite(self, limite: LimiteAbstrato):
-        validacao_setter(limite, self.classe_limite())
+        validacao_tipo(limite, self.classe_limite())
         self.__limite = limite

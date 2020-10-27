@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.source.helpers.setter import validacao_setter
+from app.source.helpers.setter import validacao_tipo
 
 
 class LimiteAbstrato(ABC):
@@ -56,5 +56,5 @@ class LimiteAbstrato(ABC):
 
     @dado.setter
     def dado(self, dado):
-        validacao_setter(dado, self.classe_dado())
+        validacao_tipo(dado, self.classe_dado())
         self.__dado = dado

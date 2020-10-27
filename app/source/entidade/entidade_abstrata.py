@@ -1,5 +1,5 @@
 from abc import ABC
-from app.source.helpers.setter import validacao_setter
+from app.source.helpers.setter import validacao_tipo
 
 
 class EntidadeAbstrata(ABC):
@@ -12,5 +12,5 @@ class EntidadeAbstrata(ABC):
 
     @identificador.setter
     def identificador(self, identificador: int):
-        validacao_setter(identificador, int)
+        validacao_tipo(identificador, int)
         self.__identificador = identificador

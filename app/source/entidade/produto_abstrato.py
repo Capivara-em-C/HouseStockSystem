@@ -1,5 +1,5 @@
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
-from app.source.helpers.setter import validacao_setter
+from app.source.helpers.setter import validacao_tipo
 
 
 class ProdutoAbstrato(EntidadeAbstrata):
@@ -9,7 +9,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
             nome: str = "",
             descricao: str = "",
             data_fabricacao: str = "",
-            categorias: list = None,
+            categorias: dict = None,
             ultimo_valor: float = 0,
             prioridade: int = 0,
     ):
@@ -31,7 +31,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
 
     @nome.setter
     def nome(self, nome: str):
-        validacao_setter(nome, str)
+        validacao_tipo(nome, str)
         self.__nome = nome
 
     @property
@@ -40,7 +40,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
 
     @descricao.setter
     def descricao(self, descricao: str):
-        validacao_setter(descricao, str)
+        validacao_tipo(descricao, str)
         self.__descricao = descricao
 
     @property
@@ -49,17 +49,30 @@ class ProdutoAbstrato(EntidadeAbstrata):
 
     @data_fabricacao.setter
     def data_fabricacao(self, data_fabricacao: str):
-        validacao_setter(data_fabricacao, str)
+        validacao_tipo(data_fabricacao, str)
         self.__data_fabricacao = data_fabricacao
 
     @property
-    def categorias(self) -> list:
+    def categorias(self) -> dict:
         return self.__categorias
 
     @categorias.setter
-    def categorias(self, categorias: list):
-        validacao_setter(categorias, list)
+    def categorias(self, categorias: dict):
+        validacao_tipo(categorias, dict)
         self.__categorias = categorias
+
+    # @TODO fazer o link entre entidade Categorias
+    def adicionar_categoria(self, categoria: dict):
+        validacao_tipo(categoria, dict)
+        self.__categorias[categoria["identificador"]] = categoria
+
+    def remover_categoria(self, categoria: dict):
+        validacao_tipo(categoria, dict)
+        del self.__categorias[categoria["identificador"]]
+
+    def existe_categoria(self, categoria):
+        validacao_tipo(categoria, dict)
+        return categoria["identificador"] in self.__categorias.keys()
 
     @property
     def ultimo_valor(self) -> float:
@@ -67,7 +80,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
 
     @ultimo_valor.setter
     def ultimo_valor(self, ultimo_valor: float):
-        validacao_setter(ultimo_valor, float)
+        validacao_tipo(ultimo_valor, float)
         self.__ultimo_valor = ultimo_valor
 
     @property
@@ -76,5 +89,5 @@ class ProdutoAbstrato(EntidadeAbstrata):
 
     @prioridade.setter
     def prioridade(self, prioridade: int):
-        validacao_setter(prioridade, int)
+        validacao_tipo(prioridade, int)
         self.__prioridade = prioridade
