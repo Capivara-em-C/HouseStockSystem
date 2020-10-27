@@ -1,7 +1,7 @@
 from abc import ABC
-from app.source.entidade.EntidadeAbstrata import EntidadeAbstrata
-from app.source.limite.LimiteAbstrato import LimiteAbstrato
-from app.source.Exception.RotaInexistenteException import RotaInexistenteException
+from app.source.entidade.entidade_abstrata import EntidadeAbstrata
+from app.source.limite.limite_abstrato import LimiteAbstrato
+from app.source.exception.rotaInexistenteException import RotaInexistenteException
 
 
 class ControleAbstrato(ABC):

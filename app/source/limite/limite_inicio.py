@@ -1,10 +1,9 @@
-from app.source.limite.LimiteAbstrato import LimiteAbstrato
+from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
 class LimiteInicio(LimiteAbstrato):
     def cabecalho(self):
         print("============================================================\n")
-        print("                    Seja bem vindo *u*!                     \n")
         print("                           Home                             \n")
         print("------------------------------------------------------------\n")
 
@@ -13,6 +12,7 @@ class LimiteInicio(LimiteAbstrato):
 
     def home(self):
         self.cabecalho()
+        print("                    Seja bem vindo *u*!                     \n")
         self.roda_pe()
 
     def opcoes(self):
@@ -29,4 +29,5 @@ class LimiteInicio(LimiteAbstrato):
         for opcao in self.opcoes():
             selecionados += [input(opcao)]
 
+        self.roda_pe()
         return selecionados
