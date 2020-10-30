@@ -2,6 +2,7 @@ from abc import ABC
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.limite.limite_abstrato import LimiteAbstrato
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
+from app.source.helpers.setter import validacao_tipo
 
 
 class ControleAbstrato(ABC):
@@ -69,11 +70,8 @@ class ControleAbstrato(ABC):
 
     @entidade.setter
     def entidade(self, entidade: EntidadeAbstrata or None = None):
-        if isinstance(entidade, self.classe_entidade()) or entidade is None:
-            self.__entidade = entidade
-            return
-
-        raise Exception("Entidade passada não é uma instancia de "+self.classe_entidade().__name__)
+        validacao_tipo(entidade, self.classe_entidade())
+        self.__entidade = entidade
 
     @staticmethod
     def classe_entidade():
@@ -85,8 +83,5 @@ class ControleAbstrato(ABC):
 
     @limite.setter
     def limite(self, limite: LimiteAbstrato):
-        if isinstance(limite, self.classe_limite()):
-            self.__limite = limite
-            return
-
-        raise Exception("Limite passada não é uma instancia de "+self.classe_limite().__name__)
+        validacao_tipo(limite, self.classe_limite())
+        self.__limite = limite

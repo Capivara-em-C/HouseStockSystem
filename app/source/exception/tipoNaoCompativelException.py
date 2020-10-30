@@ -1,0 +1,4 @@
+
+
+class TipoNaoCompativelException(Exception):
+    pass

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from app.source.helpers.setter import validacao_tipo
 
 
 class LimiteAbstrato(ABC):
@@ -55,8 +56,5 @@ class LimiteAbstrato(ABC):
 
     @dado.setter
     def dado(self, dado):
-        if isinstance(dado, self.classe_dado()) or dado is None:
-            self.__dado = dado
-            return
-
-        raise Exception("Dado passado não é uma instancia de " + self.classe_dado().__name__)
+        validacao_tipo(dado, self.classe_dado())
+        self.__dado = dado
