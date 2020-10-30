@@ -9,7 +9,7 @@ class Estoque(EntidadeAbstrata):
         self.estoque_minimo = estoque_minimo
 
     @property
-    def quantidade(self):
+    def quantidade(self) -> int:
         return self.__quantidade
 
     @quantidade.setter
@@ -18,7 +18,7 @@ class Estoque(EntidadeAbstrata):
         self.__quantidade = quantidade
 
     @property
-    def estoque_minimo(self):
+    def estoque_minimo(self) -> int:
         return self.__estoque_minimo
 
     @estoque_minimo.setter

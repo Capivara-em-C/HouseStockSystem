@@ -1,5 +1,5 @@
-from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.estoque import Estoque
+from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.helpers.setter import validacao_tipo
 
 
@@ -28,7 +28,7 @@ class ProdutoConsumivel(ProdutoAbstrato):
         self.estoque = estoque
 
     @property
-    def estoque(self):
+    def estoque(self) -> Estoque:
         return self.__estoque
 
     @estoque.setter
