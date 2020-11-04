@@ -9,7 +9,7 @@ class ControleCategoria(ControleAbstrato):
     def classe_limite():
         return LimiteInicio
 
-    def rotas(self, nome_funcao):
+    def rotas(self, nome_funcao) -> dict:
         rota = {
             "home": {
                 "n": self.nova_categoria,
@@ -42,5 +42,3 @@ class ControleCategoria(ControleAbstrato):
 
     def deletar_categoria(self):
         pass
-
-

@@ -9,10 +9,10 @@ class Categoria(EntidadeAbstrata):
         self.nome = nome
 
     @property
-    def nome(self):
+    def nome(self) -> str:
         return self.__nome
 
     @nome.setter
-    def nome(self, nome):
+    def nome(self, nome: str):
         validacao_tipo(nome, str)
         self.__nome = nome
