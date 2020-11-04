@@ -9,8 +9,7 @@ class ControleGarantia(ControleAbstrato):
     def classe_limite():
         return LimiteInicio
 
-    def rotas(self, nome_funcao):
-
+    def rotas(self, nome_funcao) -> dict:
         rota = {
             "home": {
                 "a": self.nova_garantia,

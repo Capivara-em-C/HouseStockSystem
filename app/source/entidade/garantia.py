@@ -11,7 +11,7 @@ class Garantia(EntidadeAbstrata):
             data_validade: date,
             documento: str,
             codigo: str,
-            numero_serie:str,
+            numero_serie: str,
     ):
         super.__init__(identificador)
         self.data_criacao = data_criacao
@@ -20,21 +20,25 @@ class Garantia(EntidadeAbstrata):
         self.codigo = codigo
         self.numero_serie = numero_serie
 
-    def retorna_garantia(self):
-        garantia = "Data criação: " + self.data_criacao + "\n Data validade: " + self.data_validade + "\n Documento: " + self.documento + "\n Código: " + self.codigo + "\n Número de Série: " + self.numero_serie
+    def retorna_garantia(self) -> str:
+        garantia = "Data criação: " + self.data_criacao +\
+                   "\n Data validade: " + self.data_validade +\
+                   "\n Documento: " + self.documento +\
+                   "\n Código: " + self.codigo +\
+                   "\n Número de Série: " + self.numero_serie
         return garantia
 
     @property
-    def data_criacao(self):
+    def data_criacao(self) -> date:
         return self.data_criacao
 
     @data_criacao.setter
-    def data_criacao(self,data):
+    def data_criacao(self, data):
         validacao_tipo(data, date)
         self.data_criacao = data
 
     @property
-    def data_validade(self):
+    def data_validade(self) -> date:
         return self.data_validade
 
     @data_validade.setter
@@ -43,7 +47,7 @@ class Garantia(EntidadeAbstrata):
         self.data_validade = data
 
     @property
-    def documento(self):
+    def documento(self) -> str:
         return self.documento
 
     @documento.setter
@@ -52,7 +56,7 @@ class Garantia(EntidadeAbstrata):
         self.documento = documento
 
     @property
-    def codigo(self):
+    def codigo(self) -> str:
         return self.codigo
 
     @data_criacao.setter
@@ -61,7 +65,7 @@ class Garantia(EntidadeAbstrata):
         self.codigo = codigo
 
     @property
-    def numero_serie(self):
+    def numero_serie(self) -> str:
         return self.numero_serie
 
     @numero_serie.setter
