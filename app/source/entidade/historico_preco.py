@@ -4,13 +4,18 @@ from datetime import date
 
 class HistoricoPreco(EntidadeAbstrata):
 
-    def __init__(self,identificador: int, valor: float, data_valor: date):
+    def __init__(
+            self,
+            identificador: int,
+            valor: float,
+            data_valor: date
+    ):
         super.__init__(identificador)
         self.valor = valor
-        self.data_valor = date
+        self.data_valor = data_valor
 
     @property
-    def valor(self):
+    def valor(self) -> float:
         return self.valor
 
     @valor.setter
@@ -19,8 +24,9 @@ class HistoricoPreco(EntidadeAbstrata):
         self.valor = valor
 
     @property
-    def data_valor(self):
+    def data_valor(self) -> date:
         return self.data_valor
+
 
     @data_valor.setter
     def valor(self, valor):
