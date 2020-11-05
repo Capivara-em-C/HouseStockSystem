@@ -1,8 +1,29 @@
 from app.source.exception.tipoNaoCompativelException import TipoNaoCompativelException
 
 
-def validacao_tipo(propriedade, tipo):
+def validacao_tipo(propriedade, tipo: type):
     if not isinstance(propriedade, tipo):
         raise TipoNaoCompativelException(
             "Propriedade passada[" + str(propriedade) + "] " + " não é um do tipo[ " + tipo.__name__ + "]."
+        )
+
+
+def validacao_multipla_tipo_e(propriedade, tipos: list):
+    validacao_tipo(tipos, list)
+
+    for tipo in tipos:
+        validacao_tipo(propriedade, tipo)
+
+
+def validacao_multipla_tipo_ou(propriedade, tipos: list):
+    validacao_tipo(tipos, list)
+    validacao = False
+
+    for tipo in tipos:
+        validacao |= isinstance(propriedade, tipo)
+
+    if not validacao:
+        raise TipoNaoCompativelException(
+            "Propriedade passada[" + str(propriedade) + "] " +
+            " não é um dos tipos[ " + str(tipos) + "]."
         )

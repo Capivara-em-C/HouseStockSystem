@@ -15,7 +15,7 @@ class LimiteInicio(LimiteAbstrato):
         print("                    Seja bem vindo *u*!                     \n")
         self.roda_pe()
 
-    def opcoes(self):
+    def opcoes(self) -> list:
         return [
             "Opções: \n" +
             " - Adicionar quantidade a um item (a) \n" +
@@ -23,11 +23,3 @@ class LimiteInicio(LimiteAbstrato):
             " - Listagem de Produtos (p) \n" +
             " - Sair (s) \n\n",
         ]
-
-    def selecionar_opcao(self):
-        selecionados = []
-        for opcao in self.opcoes():
-            selecionados += [input(opcao)]
-
-        self.roda_pe()
-        return selecionados

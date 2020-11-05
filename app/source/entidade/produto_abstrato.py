@@ -1,8 +1,10 @@
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.helpers.setter import validacao_tipo
+from abc import abstractmethod
 
 
 class ProdutoAbstrato(EntidadeAbstrata):
+    @abstractmethod
     def __init__(
             self,
             identificador: int,
@@ -16,7 +18,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
         super().__init__(identificador)
 
         if categorias is None:
-            categorias = []
+            categorias = {}
 
         self.nome = nome
         self.descricao = descricao
@@ -70,7 +72,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
         validacao_tipo(categoria, dict)
         del self.__categorias[categoria["identificador"]]
 
-    def existe_categoria(self, categoria):
+    def existe_categoria(self, categoria: dict) -> bool:
         validacao_tipo(categoria, dict)
         return categoria["identificador"] in self.__categorias.keys()
 
@@ -91,3 +93,10 @@ class ProdutoAbstrato(EntidadeAbstrata):
     def prioridade(self, prioridade: int):
         validacao_tipo(prioridade, int)
         self.__prioridade = prioridade
+
+    def objeto_limite(self) -> dict:
+        return {
+            "Nº Referencia": self.identificador,
+            "Nome": self.nome,
+            "Último valor": self.ultimo_valor,
+        }

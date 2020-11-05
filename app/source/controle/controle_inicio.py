@@ -1,6 +1,8 @@
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.limite.limite_inicio import LimiteInicio
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
+from app.source.controle.controle_produto import ControleProduto
+from app.source.limite.limite_produto import LimiteProduto
 
 
 class ControleInicio(ControleAbstrato):
@@ -28,7 +30,8 @@ class ControleInicio(ControleAbstrato):
         rotas = self.rotas("home")
         self.limite.home()
         opcao = self.limite.selecionar_opcao()[0]
-        self.selecione_opcao(rotas, opcao, self.home)
+        self.selecione_rota(rotas, opcao, self.home)
+        self.home()
 
     def nova_compra(self):
         pass
@@ -37,4 +40,7 @@ class ControleInicio(ControleAbstrato):
         pass
 
     def produto(self):
-        pass
+        controle_produto = ControleProduto(LimiteProduto())
+        controle_produto.entidades = self.entidades
+        controle_produto.listar()
+        self.entidades = controle_produto.entidades
