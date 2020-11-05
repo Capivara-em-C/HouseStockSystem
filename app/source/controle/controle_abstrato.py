@@ -2,10 +2,14 @@ from abc import ABC
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.limite.limite_abstrato import LimiteAbstrato
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
+from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
 from app.source.helpers.setter import validacao_tipo
 
 
 class ControleAbstrato(ABC):
+    # Lista de Entidades que salvas neste controle
+    PRODUTO_ENTIDADE = "produtos"
+
     def __init__(
             self,
             limite: LimiteAbstrato,
@@ -29,6 +33,9 @@ class ControleAbstrato(ABC):
                 "v": self.listar,
             },
             "show": {
+                "v": self.listar
+            },
+            "deletar": {
                 "v": self.listar
             }
         }
@@ -57,6 +64,9 @@ class ControleAbstrato(ABC):
     def atualizar(self):
         raise Exception("Método [Atualizar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
+    def mostrar(self):
+        raise Exception("Método [Mostrar] não permitido para este controle[%s]".format(self.__class__.__name__))
+
     def deletar(self):
         raise Exception("Método [Deletar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
@@ -66,11 +76,8 @@ class ControleAbstrato(ABC):
     def exportar_entidades(self) -> list:
         resp = []
 
-        if self.entidades.get("produtos") is None:
-            return []
-
-        for chave in self.entidades.get("produtos"):
-            resp.append(self.entidades["produtos"][chave].objeto_limite())
+        for chave in self.entidades[self.PRODUTO_ENTIDADE]:
+            resp.append(self.entidades[self.PRODUTO_ENTIDADE][chave].objeto_limite())
 
         return resp
 
@@ -81,7 +88,9 @@ class ControleAbstrato(ABC):
     @entidades.setter
     def entidades(self, listas_entidades: dict or None = None):
         if listas_entidades is None:
-            listas_entidades = {}
+            listas_entidades = {
+                self.PRODUTO_ENTIDADE: {}
+            }
 
         validacao_tipo(listas_entidades, dict)
 
@@ -89,7 +98,7 @@ class ControleAbstrato(ABC):
             if entidades is not None:
                 validacao_tipo(entidades, dict)
 
-                if entidades.get("produtos"):
+                if entidades.get(self.PRODUTO_ENTIDADE):
                     validacao_tipo(entidades, self.classe_entidade())
 
         self.__entidades = listas_entidades
@@ -98,14 +107,31 @@ class ControleAbstrato(ABC):
         validacao_tipo(tipo_entidade, str)
         validacao_tipo(entidade, self.classe_entidade())
 
-        if tipo_entidade not in list(self.__entidades.keys()):
-            self.__entidades[tipo_entidade] = {}
+        if self.entidades[tipo_entidade].get(entidade.identificador) is not None:
+            raise CodigoReferenciaDuplicadoException
 
-        self.__entidades[tipo_entidade][entidade.identificador] = entidade
+        self.entidades[tipo_entidade][entidade.identificador] = entidade
 
-    def remover_entidade(self, entidade: EntidadeAbstrata):
+    def atualizar_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata):
+        validacao_tipo(tipo_entidade, str)
         validacao_tipo(entidade, self.classe_entidade())
-        del(self.__entidades[entidade.identificador])
+
+        # @TODO make soft to only update variables that user really want
+        self.entidades[tipo_entidade][entidade.identificador] = entidade
+
+    def remover_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata or None):
+        validacao_tipo(tipo_entidade, str)
+
+        if entidade is None:
+            return self
+
+        validacao_tipo(entidade, self.classe_entidade())
+        tipo = self.entidades.get(tipo_entidade)
+
+        if tipo is None or tipo.get(entidade.identificador) is None:
+            return self
+
+        del(self.entidades[tipo_entidade][entidade.identificador])
 
         return self
 

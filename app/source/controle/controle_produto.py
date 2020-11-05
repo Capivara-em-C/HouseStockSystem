@@ -28,16 +28,25 @@ class ControleProduto(ControleAbstrato):
         self.limite.criar()
         escolhas = self.limite.selecionar_opcao("criar")
 
-        self.adicionar_entidade("produtos", self.lista_para_produto(escolhas))
+        self.adicionar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
 
         self.selecione_rota(rotas, "v", self.listar)
 
-    def editar(self):
-        rotas = self.rotas("criar")
+    def atualizar(self):
+        rotas = self.rotas("atualizar")
         self.limite.criar()
-        escolhas = self.limite.selecionar_opcao("criar")
+        escolhas = self.limite.selecionar_opcao("atualizar")
 
-        self.adicionar_entidade("produtos", self.lista_para_produto(escolhas))
+        self.atualizar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
+    def deletar(self):
+        rotas = self.rotas("deletar")
+        self.limite.criar()
+        escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
+
+        self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
 
         self.selecione_rota(rotas, "v", self.listar)
 
