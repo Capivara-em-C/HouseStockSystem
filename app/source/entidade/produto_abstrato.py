@@ -100,3 +100,13 @@ class ProdutoAbstrato(EntidadeAbstrata):
             "Nome": self.nome,
             "Último valor": self.ultimo_valor,
         }
+
+    def objeto_limite_detalhado(self) -> dict:
+        return {
+            "Nº Referencia": self.identificador,
+            "Nome": self.nome,
+            "Descrição": self.descricao,
+            "Data de Fabricação": self.data_fabricacao,
+            "Categorias": self.categorias,
+            "Último valor pago": self.ultimo_valor,
+        }
