@@ -1,5 +1,4 @@
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
-from app.source.entidade.estoque import Estoque
 from app.source.entidade.lote import Lote
 from app.source.helpers.setter import validacao_tipo
 
@@ -14,7 +13,8 @@ class ProdutoPerecivel(ProdutoConsumivel):
             categorias: dict = None,
             ultimo_valor: float = 0,
             prioridade: int = 0,
-            estoque: Estoque = None,
+            estoque_quantidade: int = 0,
+            estoque_minimo: int = 0,
             lotes: dict = None
     ):
         super().__init__(
@@ -25,7 +25,8 @@ class ProdutoPerecivel(ProdutoConsumivel):
             categorias,
             ultimo_valor,
             prioridade,
-            estoque
+            estoque_quantidade,
+            estoque_minimo
         )
 
         self.lotes = lotes

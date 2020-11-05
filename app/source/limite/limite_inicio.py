@@ -18,11 +18,11 @@ class LimiteInicio(LimiteAbstrato):
     @staticmethod
     def opcoes() -> dict:
         return {
-            "home": [
-                "Opções: \n" +
+            "home": {
+                "menu": "Opções: \n" +
                 " - Adicionar quantidade a um item (a) \n" +
                 " - Remover quantidade de um item (r) \n" +
                 " - Listagem de Produtos (p) \n" +
                 " - Sair (s) \n\n",
-            ]
+            },
         }

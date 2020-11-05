@@ -108,11 +108,13 @@ class LimiteAbstrato(ABC):
 
         return linha_retorno
 
-    def selecionar_opcao(self, controle: str) -> list:
+    def selecionar_opcao(self, controle: str) -> dict:
         validacao_tipo(controle, str)
 
-        selecionados = []
-        for opcao in self.opcoes()[controle]:
-            selecionados += [input(opcao)]
+        selecionados = {}
+        opcoes = self.opcoes()[controle]
+
+        for opcao in opcoes:
+            selecionados[opcao] += input(opcoes[opcao])
 
         return selecionados

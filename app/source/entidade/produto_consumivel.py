@@ -1,4 +1,3 @@
-from app.source.entidade.estoque import Estoque
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.helpers.setter import validacao_tipo
 
@@ -13,7 +12,8 @@ class ProdutoConsumivel(ProdutoAbstrato):
             categorias: dict = None,
             ultimo_valor: float = 0,
             prioridade: int = 0,
-            estoque: Estoque = None
+            estoque_quantidade: int = 0,
+            estoque_minimo: int = 0
     ):
         super().__init__(
             identificador,
@@ -25,15 +25,23 @@ class ProdutoConsumivel(ProdutoAbstrato):
             prioridade
         )
 
-        self.estoque = estoque
+        self.estoque_quantidade = estoque_quantidade
+        self.estoque_minimo = estoque_minimo
 
     @property
-    def estoque(self) -> Estoque:
-        return self.__estoque
+    def estoque_quantidade(self) -> int:
+        return self.__estoque_quantidade
 
-    @estoque.setter
-    def estoque(self, estoque: Estoque or None):
-        if estoque is not None:
-            validacao_tipo(estoque, Estoque)
+    @estoque_quantidade.setter
+    def estoque_quantidade(self, estoque_quantidade: int):
+        validacao_tipo(estoque_quantidade, int)
+        self.__estoque_quantidade = estoque_quantidade
 
-        self.__estoque = estoque
+    @property
+    def estoque_minimo(self) -> int:
+        return self.__estoque_minimo
+
+    @estoque_minimo.setter
+    def estoque_minimo(self, estoque_minimo: int):
+        validacao_tipo(estoque_minimo, int)
+        self.__estoque_minimo = estoque_minimo
