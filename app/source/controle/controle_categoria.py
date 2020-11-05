@@ -9,7 +9,7 @@ class ControleCategoria(ControleAbstrato):
     def classe_limite() -> type:
         return LimiteInicio
 
-    def rotas(self, nome_funcao: str) -> dict:
+    def rotas(self, nome_funcao: str):
         rota = {
             "home": {
                 "n": self.nova_categoria,
