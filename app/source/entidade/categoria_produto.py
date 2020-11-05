@@ -6,7 +6,7 @@ class Categoria(EntidadeAbstrata):
 
     def __init__(self,identificador: int, nome: str):
         super.__init__(identificador)
-        self.__nome = nome
+        self.nome = nome
 
     @property
     def nome(self) -> str:
