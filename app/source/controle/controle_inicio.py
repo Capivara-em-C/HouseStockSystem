@@ -6,7 +6,6 @@ from app.source.limite.limite_produto import LimiteProduto
 
 
 class ControleInicio(ControleAbstrato):
-
     @staticmethod
     def classe_limite():
         return LimiteInicio
@@ -29,7 +28,7 @@ class ControleInicio(ControleAbstrato):
     def home(self):
         rotas = self.rotas("home")
         self.limite.home()
-        opcao = self.limite.selecionar_opcao()[0]
+        opcao = self.limite.selecionar_opcao("home")["menu"]
         self.selecione_rota(rotas, opcao, self.home)
         self.home()
 

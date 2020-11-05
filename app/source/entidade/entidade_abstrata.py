@@ -3,7 +3,7 @@ from app.source.helpers.setter import validacao_tipo
 
 
 class EntidadeAbstrata(ABC):
-    def __init__(self, identificador: int):
+    def __init__(self, identificador: str):
         self.identificador = identificador
 
     @abstractmethod
@@ -11,10 +11,10 @@ class EntidadeAbstrata(ABC):
         pass
 
     @property
-    def identificador(self) -> int:
+    def identificador(self) -> str:
         return self.__identificador
 
     @identificador.setter
-    def identificador(self, identificador: int):
-        validacao_tipo(identificador, int)
+    def identificador(self, identificador: str):
+        validacao_tipo(identificador, str)
         self.__identificador = identificador

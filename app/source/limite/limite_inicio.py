@@ -15,11 +15,14 @@ class LimiteInicio(LimiteAbstrato):
         print("                    Seja bem vindo *u*!                     \n")
         self.roda_pe()
 
-    def opcoes(self) -> list:
-        return [
-            "Opções: \n" +
-            " - Adicionar quantidade a um item (a) \n" +
-            " - Remover quantidade de um item (r) \n" +
-            " - Listagem de Produtos (p) \n" +
-            " - Sair (s) \n\n",
-        ]
+    @staticmethod
+    def opcoes() -> dict:
+        return {
+            "home": {
+                "menu": "Opções: \n" +
+                " - Adicionar quantidade a um item (a) \n" +
+                " - Remover quantidade de um item (r) \n" +
+                " - Listagem de Produtos (p) \n" +
+                " - Sair (s) \n\n",
+            },
+        }

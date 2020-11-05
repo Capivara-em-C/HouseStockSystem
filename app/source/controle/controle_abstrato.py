@@ -84,9 +84,10 @@ class ControleAbstrato(ABC):
 
         self.__entidades = entidades
 
-    def adicionar_entidade(self, entidade: EntidadeAbstrata):
+    def adicionar_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata):
+        validacao_tipo(tipo_entidade, str)
         validacao_tipo(entidade, self.classe_entidade())
-        self.__entidades[entidade.identificador] = entidade
+        self.__entidades[tipo_entidade][entidade.identificador] = entidade
 
         return self
 
