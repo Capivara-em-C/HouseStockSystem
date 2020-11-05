@@ -1,5 +1,5 @@
 from app.source.controle.controle_abstrato import ControleAbstrato
-from app.source.limite.limite_inicio import LimiteInicio
+from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
 
 
@@ -7,15 +7,15 @@ class ControleCategoria(ControleAbstrato):
 
     @staticmethod
     def classe_limite() -> type:
-        return LimiteInicio
+        return LimiteCategoria
 
     def rotas(self, nome_funcao: str):
         rota = {
             "home": {
-                "n": self.nova_categoria,
-                "l": self.listar_categoria,
-                "d": self.deletar_categoria,
-                "e": self.editar_categoria,
+                "n": self.criar,
+                "l": self.listar,
+                "d": self.deletar,
+                "e": self.atualizar,
                 "s": exit,
             },
         }
@@ -31,14 +31,38 @@ class ControleCategoria(ControleAbstrato):
         opcao = self.limite.selecionar_opcao()[0]
         self.selecione_opcao(rotas, opcao, self.home)
 
-    def nova_categoria(self):
-        pass
+    def listar(self):
+        rotas = self.rotas("listar")
+        self.limite.listar(self.exportar_entidades())
+        opcao = self.limite.selecionar_opcao("listar")["menu"]
+        retorno = self.selecione_rota(rotas, opcao, self.listar)
 
-    def listar_categoria(self):
-        pass
+        if retorno is not None:
+            self.listar()
 
-    def editar_categoria(self):
-        pass
+    def criar(self):
+        rotas = self.rotas("criar")
+        self.limite.criar()
+        escolhas = self.limite.selecionar_opcao("criar")
 
-    def deletar_categoria(self):
-        pass
+        self.adicionar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
+    def atualizar(self):
+        rotas = self.rotas("atualizar")
+        self.limite.criar()
+        escolhas = self.limite.selecionar_opcao("atualizar")
+
+        self.atualizar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
+    def deletar(self):
+        rotas = self.rotas("deletar")
+        self.limite.criar()
+        escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
+
+        self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
+
+        self.selecione_rota(rotas, "v", self.listar)
