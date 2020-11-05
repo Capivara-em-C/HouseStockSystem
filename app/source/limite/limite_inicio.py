@@ -23,11 +23,3 @@ class LimiteInicio(LimiteAbstrato):
             " - Listagem de Produtos (p) \n" +
             " - Sair (s) \n\n",
         ]
-
-    def selecionar_opcao(self):
-        selecionados = []
-        for opcao in self.opcoes():
-            selecionados += [input(opcao)]
-
-        self.roda_pe()
-        return selecionados

@@ -9,10 +9,10 @@ class ControleAbstrato(ABC):
     def __init__(
             self,
             limite: LimiteAbstrato,
-            entidade: EntidadeAbstrata or None = None
+            entidades: dict or None = None
     ):
         self.limite = limite
-        self.entidade = entidade
+        self.entidades = entidades
 
     def rotas(self, nome_funcao) -> dict:
         rota = {
@@ -38,50 +38,77 @@ class ControleAbstrato(ABC):
         except KeyError:
             raise RotaInexistenteException("Rota passada não existente.")
 
-    def selecione_opcao(self, rotas: dict, opcao: str, funcao):
+    def selecione_rota(self, rotas: dict, opcao: str, funcao):
         try:
             rotas[opcao]()
         except KeyError:
             self.limite.erro("Opção passada não existe, digite novamente.")
             funcao()
 
-    @staticmethod
-    def classe_limite():
-        return LimiteAbstrato
-
-    def listar(self, **filtros):
+    def listar(self):
         raise Exception("Método [Listar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
-    def criar(self, **filtros):
+    def criar(self):
         raise Exception("Método [Criar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
-    def atualizar(self, **filtros):
+    def atualizar(self):
         raise Exception("Método [Atualizar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
-    def deletar(self, **filtros):
+    def deletar(self):
         raise Exception("Método [Deletar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
     def voltar_listagem(self):
         exit(0)
 
-    @property
-    def entidade(self):
-        return self.__entidade
+    def exportar_entidades(self) -> list:
+        resp = []
+        for chave in self.entidades:
+            resp.append(self.entidades[chave].objeto_limite())
 
-    @entidade.setter
-    def entidade(self, entidade: EntidadeAbstrata or None = None):
+        return resp
+
+    @property
+    def entidades(self) -> dict:
+        return self.__entidades
+
+    @entidades.setter
+    def entidades(self, entidades: dict or None = None):
+        if entidades is None:
+            entidades = {}
+
+        validacao_tipo(entidades, dict)
+
+        for entidade in entidades.values():
+            if entidade is not None:
+                validacao_tipo(entidade, self.classe_entidade())
+
+        self.__entidades = entidades
+
+    def adicionar_entidade(self, entidade: EntidadeAbstrata):
         validacao_tipo(entidade, self.classe_entidade())
-        self.__entidade = entidade
+        self.__entidades[entidade.identificador] = entidade
+
+        return self
+
+    def remover_entidade(self, entidade: EntidadeAbstrata):
+        validacao_tipo(entidade, self.classe_entidade())
+        del(self.__entidades[entidade.identificador])
+
+        return self
 
     @staticmethod
-    def classe_entidade():
+    def classe_entidade() -> type:
         return EntidadeAbstrata
 
     @property
-    def limite(self):
+    def limite(self) -> LimiteAbstrato:
         return self.__limite
 
     @limite.setter
     def limite(self, limite: LimiteAbstrato):
         validacao_tipo(limite, self.classe_limite())
         self.__limite = limite
+
+    @staticmethod
+    def classe_limite() -> type:
+        return LimiteAbstrato

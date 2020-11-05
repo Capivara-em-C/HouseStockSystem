@@ -32,6 +32,7 @@ class ProdutoConsumivel(ProdutoAbstrato):
         return self.__estoque
 
     @estoque.setter
-    def estoque(self, estoque: Estoque):
-        validacao_tipo(estoque, Estoque)
+    def estoque(self, estoque: Estoque or None):
+        if estoque is not None:
+            validacao_tipo(estoque, Estoque)
         self.__estoque = estoque
