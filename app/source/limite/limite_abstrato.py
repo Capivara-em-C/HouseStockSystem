@@ -12,11 +12,11 @@ class LimiteAbstrato(ABC):
     }
 
     @staticmethod
-    def classe_dado():
+    def classe_dado() -> type:
         return dict
 
     @abstractmethod
-    def opcoes(self):
+    def opcoes(self) -> list:
         pass
 
     def cabecalho(self):
@@ -35,19 +35,19 @@ class LimiteAbstrato(ABC):
         print(self.CUSTOMIZACAO_CONSOLE["DEFAULT"])
         print("\n\n")
 
-    def listar(self, **filtros):
+    def listar(self):
         raise Exception("Método [Listar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def criar(self, **filtros):
+    def criar(self):
         raise Exception("Método [Criar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def atualizar(self, **filtros):
+    def atualizar(self):
         raise Exception("Método [Atualizar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def mostrar(self, **filtros):
+    def mostrar(self):
         raise Exception("Método [Mostrar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def deletar(self, **filtros):
+    def deletar(self):
         raise Exception("Método [Deletar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
     def gerar_tabela(self, linhas: list, cabecalho: list or None = None):
@@ -107,7 +107,7 @@ class LimiteAbstrato(ABC):
 
         return linha_retorno
 
-    def selecionar_opcao(self):
+    def selecionar_opcao(self) -> list:
         selecionados = []
         for opcao in self.opcoes():
             selecionados += [input(opcao)]

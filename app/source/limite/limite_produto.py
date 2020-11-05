@@ -2,7 +2,7 @@ from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
 class LimiteProduto(LimiteAbstrato):
-    def opcoes(self):
+    def opcoes(self) -> list:
         return [
             "Opções: \n" +
             " - Criar novo produto (c) \n" +

@@ -18,7 +18,6 @@ class ProdutoAbstrato(EntidadeAbstrata):
         super().__init__(identificador)
 
         if categorias is None:
-            print("passou aQUI =====================<<<<<<<")
             categorias = {}
 
         self.nome = nome
@@ -73,7 +72,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
         validacao_tipo(categoria, dict)
         del self.__categorias[categoria["identificador"]]
 
-    def existe_categoria(self, categoria):
+    def existe_categoria(self, categoria: dict) -> bool:
         validacao_tipo(categoria, dict)
         return categoria["identificador"] in self.__categorias.keys()
 
@@ -95,7 +94,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
         validacao_tipo(prioridade, int)
         self.__prioridade = prioridade
 
-    def objeto_limite(self):
+    def objeto_limite(self) -> dict:
         return {
             "Nº Referencia": self.identificador,
             "Nome": self.nome,

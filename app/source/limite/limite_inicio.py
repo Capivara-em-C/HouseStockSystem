@@ -15,7 +15,7 @@ class LimiteInicio(LimiteAbstrato):
         print("                    Seja bem vindo *u*!                     \n")
         self.roda_pe()
 
-    def opcoes(self):
+    def opcoes(self) -> list:
         return [
             "Opções: \n" +
             " - Adicionar quantidade a um item (a) \n" +
