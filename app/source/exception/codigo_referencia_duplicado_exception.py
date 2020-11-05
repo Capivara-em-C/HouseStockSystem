@@ -1,0 +1,4 @@
+
+
+class CodigoReferenciaDuplicadoException(Exception):
+    pass
