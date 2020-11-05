@@ -35,19 +35,19 @@ class LimiteAbstrato(ABC):
         print(self.CUSTOMIZACAO_CONSOLE["DEFAULT"])
         print("\n\n")
 
-    def listar(self):
+    def listar(self, *args):
         raise Exception("Método [Listar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def criar(self):
+    def criar(self, *args):
         raise Exception("Método [Criar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def atualizar(self):
+    def atualizar(self, *args):
         raise Exception("Método [Atualizar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def mostrar(self):
+    def mostrar(self, *args):
         raise Exception("Método [Mostrar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
-    def deletar(self):
+    def deletar(self, *args):
         raise Exception("Método [Deletar] não permitido para este limite[%s]".format(self.__class__.__name__))
 
     def gerar_tabela(self, linhas: list, cabecalho: list or None = None):
