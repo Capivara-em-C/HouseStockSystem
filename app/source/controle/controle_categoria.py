@@ -9,28 +9,6 @@ class ControleCategoria(ControleAbstrato):
     def classe_limite() -> type:
         return LimiteCategoria
 
-    def rotas(self, nome_funcao: str):
-        rota = {
-            "home": {
-                "n": self.criar,
-                "l": self.listar,
-                "d": self.deletar,
-                "e": self.atualizar,
-                "s": exit,
-            },
-        }
-
-        try:
-            return rota[nome_funcao]
-        except KeyError:
-            raise RotaInexistenteException("Rota passada não existente.")
-
-    def home(self):
-        rotas = self.rotas("home")
-        self.limite.home()
-        opcao = self.limite.selecionar_opcao()[0]
-        self.selecione_opcao(rotas, opcao, self.home)
-
     def listar(self):
         rotas = self.rotas("listar")
         self.limite.listar(self.exportar_entidades())
@@ -66,3 +44,6 @@ class ControleCategoria(ControleAbstrato):
         self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
 
         self.selecione_rota(rotas, "v", self.listar)
+
+    def voltar_listagem(self) -> None:
+        return None

@@ -23,6 +23,7 @@ class ControleAbstrato(ABC):
             "listar": {
                 "c": self.criar,
                 "a": self.atualizar,
+                "m": self.mostrar,
                 "d": self.deletar,
                 "v": self.voltar_listagem,
             },
@@ -32,7 +33,7 @@ class ControleAbstrato(ABC):
             "atualizar": {
                 "v": self.listar,
             },
-            "show": {
+            "mostrar": {
                 "v": self.listar
             },
             "deletar": {

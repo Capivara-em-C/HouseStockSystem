@@ -45,3 +45,10 @@ class ProdutoConsumivel(ProdutoAbstrato):
     def estoque_minimo(self, estoque_minimo: int):
         validacao_tipo(estoque_minimo, int)
         self.__estoque_minimo = estoque_minimo
+
+    def objeto_limite_detalhado(self) -> dict:
+        resp = super().objeto_limite_detalhado()
+        resp["Quantidade em estoque"] = self.estoque_quantidade
+        resp["Quantidade mínima permitida em estoque"] = self.estoque_minimo
+
+        return resp
