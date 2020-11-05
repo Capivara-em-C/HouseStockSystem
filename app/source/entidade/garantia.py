@@ -14,11 +14,11 @@ class Garantia(EntidadeAbstrata):
             numero_serie: str,
     ):
         super.__init__(identificador)
-        self.__data_criacao = data_criacao
-        self.__data_validade = data_validade
-        self.__documento = documento
-        self.__codigo = codigo
-        self.__numero_serie = numero_serie
+        self.data_criacao = data_criacao
+        self.data_validade = data_validade
+        self.documento = documento
+        self.codigo = codigo
+        self.numero_serie = numero_serie
 
     def retorna_garantia(self) -> str:
         garantia = "Data criação: " + self.data_criacao() +\
