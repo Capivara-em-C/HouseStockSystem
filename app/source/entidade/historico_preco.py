@@ -11,15 +11,15 @@ class HistoricoPreco(EntidadeAbstrata):
             data_valor: str
     ):
         super.__init__(identificador)
-        self.__valor = valor
-        self.__data_valor = data_valor
+        self.valor = valor
+        self.data_valor = data_valor
 
     @property
     def valor(self) -> float:
         return self.__valor
 
     @valor.setter
-    def valor(self, valor):
+    def valor(self, valor: float):
         validacao_tipo(valor, float)
         self.__valor = valor
 
@@ -29,6 +29,6 @@ class HistoricoPreco(EntidadeAbstrata):
 
 
     @data_valor.setter
-    def valor(self, valor):
-        validacao_tipo(valor, float)
-        self.__valor = valor
+    def data_valor(self, data_valor: str):
+        validacao_tipo(data_valor, str)
+        self.__data_valor = data_valor
