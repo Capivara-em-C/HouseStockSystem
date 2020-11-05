@@ -115,6 +115,6 @@ class LimiteAbstrato(ABC):
         opcoes = self.opcoes()[controle]
 
         for opcao in opcoes:
-            selecionados[opcao] += input(opcoes[opcao])
+            selecionados[opcao] = input(opcoes[opcao])
 
         return selecionados
