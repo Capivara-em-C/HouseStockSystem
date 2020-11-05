@@ -15,8 +15,9 @@ class LimiteAbstrato(ABC):
     def classe_dado() -> type:
         return dict
 
+    @staticmethod
     @abstractmethod
-    def opcoes(self) -> list:
+    def opcoes() -> dict:
         pass
 
     def cabecalho(self):
@@ -107,9 +108,11 @@ class LimiteAbstrato(ABC):
 
         return linha_retorno
 
-    def selecionar_opcao(self) -> list:
+    def selecionar_opcao(self, controle: str) -> list:
+        validacao_tipo(controle, str)
+
         selecionados = []
-        for opcao in self.opcoes():
+        for opcao in self.opcoes()[controle]:
             selecionados += [input(opcao)]
 
         return selecionados

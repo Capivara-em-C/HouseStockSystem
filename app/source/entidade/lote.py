@@ -5,7 +5,7 @@ from app.source.helpers.setter import validacao_tipo
 class Lote(EntidadeAbstrata):
     def __init__(
             self,
-            identificador: int,
+            identificador: str,
             quantidade: int,
             data_validade: str
     ):

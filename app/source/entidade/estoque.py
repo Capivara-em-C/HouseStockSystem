@@ -3,7 +3,7 @@ from app.source.helpers.setter import validacao_tipo
 
 
 class Estoque(EntidadeAbstrata):
-    def __init__(self, identificador: int, quantidade: int, estoque_minimo: int):
+    def __init__(self, identificador: str, quantidade: int, estoque_minimo: int):
         super().__init__(identificador)
         self.quantidade = quantidade
         self.estoque_minimo = estoque_minimo
@@ -25,3 +25,8 @@ class Estoque(EntidadeAbstrata):
     def estoque_minimo(self, estoque_minimo: int):
         validacao_tipo(estoque_minimo, int)
         self.__estoque_minimo = estoque_minimo
+
+    def objeto_limite(self) -> dict:
+        return {
+
+        }

@@ -20,7 +20,7 @@ def validacao_multipla_tipo_ou(propriedade, tipos: list):
     validacao = False
 
     for tipo in tipos:
-        validacao |= isinstance(propriedade, tipo)
+        validacao |= (tipo is None and propriedade is None) or isinstance(propriedade, tipo)
 
     if not validacao:
         raise TipoNaoCompativelException(

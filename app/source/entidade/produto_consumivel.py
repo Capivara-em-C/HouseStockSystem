@@ -6,7 +6,7 @@ from app.source.helpers.setter import validacao_tipo
 class ProdutoConsumivel(ProdutoAbstrato):
     def __init__(
             self,
-            identificador: int,
+            identificador: str,
             nome: str = "",
             descricao: str = "",
             data_fabricacao: str = "",
@@ -35,4 +35,5 @@ class ProdutoConsumivel(ProdutoAbstrato):
     def estoque(self, estoque: Estoque or None):
         if estoque is not None:
             validacao_tipo(estoque, Estoque)
+
         self.__estoque = estoque

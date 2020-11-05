@@ -7,7 +7,7 @@ from app.source.helpers.setter import validacao_tipo
 class ProdutoPerecivel(ProdutoConsumivel):
     def __init__(
             self,
-            identificador: int,
+            identificador: str,
             nome: str = "",
             descricao: str = "",
             data_fabricacao: str = "",

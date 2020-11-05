@@ -7,7 +7,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
     @abstractmethod
     def __init__(
             self,
-            identificador: int,
+            identificador: str,
             nome: str = "",
             descricao: str = "",
             data_fabricacao: str = "",

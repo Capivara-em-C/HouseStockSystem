@@ -2,15 +2,28 @@ from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
 class LimiteProduto(LimiteAbstrato):
-    def opcoes(self) -> list:
-        return [
-            "Opções: \n" +
-            " - Criar novo produto (c) \n" +
-            " - Editar produto (e) \n" +
-            " - Detalhes do produto (d) \n" +
-            " - Apagar produto (a) \n" +
-            " - Voltar (v) \n\n",
-        ]
+    def opcoes(self) -> dict:
+        return {
+            "listar": [
+                "Opções: \n" +
+                " - Criar novo produto (c) \n" +
+                " - Editar produto (e) \n" +
+                " - Detalhes do produto (d) \n" +
+                " - Apagar produto (a) \n" +
+                " - Voltar (v) \n\n",
+            ],
+            "criar": [
+                "Digite as informações requeridas: \n" +
+                "Código de referência: ",
+                "Nome: ",
+                "Descrição: ",
+                "Data de fabricação: ",
+                "Valor: ",
+                "Prioridade: ",
+                "Quantidade em estoque: ",
+                "Estoque mínimo: ",
+            ],
+        }
 
     def listar(self, produtos: list or None = None):
         self.cabecalho()
