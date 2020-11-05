@@ -3,8 +3,7 @@ from app.source.helpers.setter import validacao_tipo
 
 
 class Categoria(EntidadeAbstrata):
-
-    def __init__(self,identificador: int, nome: str):
+    def __init__(self, identificador: int, nome: str):
         super.__init__(identificador)
         self.nome = nome
 
