@@ -10,7 +10,7 @@ class HistoricoPreco(EntidadeAbstrata):
             valor: float,
             data_valor: str
     ):
-        super.__init__(identificador)
+        super().__init__(identificador)
         self.valor = valor
         self.data_valor = data_valor
 
