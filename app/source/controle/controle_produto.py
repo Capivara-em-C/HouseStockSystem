@@ -32,12 +32,22 @@ class ControleProduto(ControleAbstrato):
 
         self.selecione_rota(rotas, "v", self.listar)
 
+    def editar(self):
+        rotas = self.rotas("criar")
+        self.limite.criar()
+        escolhas = self.limite.selecionar_opcao("criar")
+
+        self.adicionar_entidade("produtos", self.lista_para_produto(escolhas))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
     def voltar_listagem(self) -> None:
         return None
 
     @staticmethod
     def lista_para_produto(lista: dict) -> ProdutoAbstrato:
         validacao_tipo(lista, dict)
+
         if int(lista["estoque"]) > 0:
             return ProdutoConsumivel(
                 lista["codigo_referencia"],

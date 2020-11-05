@@ -39,11 +39,14 @@ class ControleAbstrato(ABC):
             raise RotaInexistenteException("Rota passada não existente.")
 
     def selecione_rota(self, rotas: dict, opcao: str, funcao):
-        try:
-            rotas[opcao]()
-        except KeyError:
+        rota = rotas.get(opcao)
+
+        if rota is None:
             self.limite.erro("Opção passada não existe, digite novamente.")
             funcao()
+            return
+
+        rota()
 
     def listar(self):
         raise Exception("Método [Listar] não permitido para este controle[%s]".format(self.__class__.__name__))
@@ -62,8 +65,12 @@ class ControleAbstrato(ABC):
 
     def exportar_entidades(self) -> list:
         resp = []
-        for chave in self.entidades:
-            resp.append(self.entidades[chave].objeto_limite())
+
+        if self.entidades.get("produtos") is None:
+            return []
+
+        for chave in self.entidades.get("produtos"):
+            resp.append(self.entidades["produtos"][chave].objeto_limite())
 
         return resp
 
@@ -72,24 +79,29 @@ class ControleAbstrato(ABC):
         return self.__entidades
 
     @entidades.setter
-    def entidades(self, entidades: dict or None = None):
-        if entidades is None:
-            entidades = {}
+    def entidades(self, listas_entidades: dict or None = None):
+        if listas_entidades is None:
+            listas_entidades = {}
 
-        validacao_tipo(entidades, dict)
+        validacao_tipo(listas_entidades, dict)
 
-        for entidade in entidades.values():
-            if entidade is not None:
-                validacao_tipo(entidade, self.classe_entidade())
+        for entidades in listas_entidades.values():
+            if entidades is not None:
+                validacao_tipo(entidades, dict)
 
-        self.__entidades = entidades
+                if entidades.get("produtos"):
+                    validacao_tipo(entidades, self.classe_entidade())
+
+        self.__entidades = listas_entidades
 
     def adicionar_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata):
         validacao_tipo(tipo_entidade, str)
         validacao_tipo(entidade, self.classe_entidade())
-        self.__entidades[tipo_entidade][entidade.identificador] = entidade
 
-        return self
+        if tipo_entidade not in list(self.__entidades.keys()):
+            self.__entidades[tipo_entidade] = {}
+
+        self.__entidades[tipo_entidade][entidade.identificador] = entidade
 
     def remover_entidade(self, entidade: EntidadeAbstrata):
         validacao_tipo(entidade, self.classe_entidade())
