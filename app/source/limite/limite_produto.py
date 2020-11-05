@@ -8,14 +8,13 @@ class LimiteProduto(LimiteAbstrato):
             "listar": {
                 "menu": "Opções: \n" +
                 " - Criar novo produto (c) \n" +
-                " - Editar produto (e) \n" +
+                " - Atualizar produto (e) \n" +
                 " - Detalhes do produto (d) \n" +
-                " - Apagar produto (a) \n" +
+                " - Deletar produto (d) \n" +
                 " - Voltar (v) \n\n",
             },
             "criar": {
-                "codigo_referencia": "Digite as informações requeridas: \n" +
-                "Código de referência: ",
+                "codigo_referencia": "Código de referência: ",
                 "nome": "Nome: ",
                 "descricao": "Descrição: ",
                 "data_fabricacao": "Data de fabricação: ",
@@ -24,6 +23,9 @@ class LimiteProduto(LimiteAbstrato):
                 "estoque": "Quantidade em estoque: ",
                 "estoque_minimo": "Estoque mínimo: ",
             },
+            "deletar": {
+                "codigo_referencia": "Código de referência: "
+            }
         }
 
     def listar(self, produtos: list or None = None):

@@ -30,6 +30,9 @@ class ControleAbstrato(ABC):
             },
             "show": {
                 "v": self.listar
+            },
+            "deletar": {
+                "v": self.listar
             }
         }
 
@@ -81,7 +84,9 @@ class ControleAbstrato(ABC):
     @entidades.setter
     def entidades(self, listas_entidades: dict or None = None):
         if listas_entidades is None:
-            listas_entidades = {}
+            listas_entidades = {
+                "produtos": {}
+            }
 
         validacao_tipo(listas_entidades, dict)
 
@@ -103,9 +108,19 @@ class ControleAbstrato(ABC):
 
         self.__entidades[tipo_entidade][entidade.identificador] = entidade
 
-    def remover_entidade(self, entidade: EntidadeAbstrata):
+    def remover_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata or None):
+        validacao_tipo(tipo_entidade, str)
+
+        if entidade is None:
+            return self
+
         validacao_tipo(entidade, self.classe_entidade())
-        del(self.__entidades[entidade.identificador])
+        tipo = self.entidades.get(tipo_entidade)
+
+        if tipo is None or tipo.get(entidade.identificador) is None:
+            return self
+
+        del(self.entidades[tipo_entidade][entidade.identificador])
 
         return self
 

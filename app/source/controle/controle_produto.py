@@ -41,6 +41,15 @@ class ControleProduto(ControleAbstrato):
 
         self.selecione_rota(rotas, "v", self.listar)
 
+    def deletar(self):
+        rotas = self.rotas("deletar")
+        self.limite.criar()
+        escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
+
+        self.remover_entidade("produtos", self.entidades["produtos"].get(escolha))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
     def voltar_listagem(self) -> None:
         return None
 
