@@ -6,10 +6,10 @@ from app.source.exception.rotaInexistenteException import RotaInexistenteExcepti
 class ControleCategoria(ControleAbstrato):
 
     @staticmethod
-    def classe_limite():
+    def classe_limite() -> type:
         return LimiteInicio
 
-    def rotas(self, nome_funcao) -> dict:
+    def rotas(self, nome_funcao: str) -> dict:
         rota = {
             "home": {
                 "n": self.nova_categoria,
