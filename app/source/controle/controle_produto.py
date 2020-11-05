@@ -15,37 +15,56 @@ class ControleProduto(ControleAbstrato):
         return ProdutoAbstrato
 
     def listar(self):
-        rotas = self.rotas("listar")
+        nome_funcao = "listar"
+
+        rotas = self.rotas(nome_funcao)
         self.limite.listar(self.exportar_entidades())
-        opcao = self.limite.selecionar_opcao("listar")["menu"]
+
+        opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
         retorno = self.selecione_rota(rotas, opcao, self.listar)
 
         if retorno is not None:
             self.listar()
 
     def criar(self):
-        rotas = self.rotas("criar")
+        nome_funcao = "criar"
+
+        rotas = self.rotas(nome_funcao)
         self.limite.criar()
-        escolhas = self.limite.selecionar_opcao("criar")
+        escolhas = self.limite.selecionar_opcao(nome_funcao)
 
         self.adicionar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
 
         self.selecione_rota(rotas, "v", self.listar)
 
     def atualizar(self):
-        rotas = self.rotas("atualizar")
-        self.limite.criar()
-        escolhas = self.limite.selecionar_opcao("atualizar")
+        nome_funcao = "atualizar"
+
+        rotas = self.rotas(nome_funcao)
+        self.limite.atualizar()
+        escolhas = self.limite.selecionar_opcao(nome_funcao)
 
         self.atualizar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
 
         self.selecione_rota(rotas, "v", self.listar)
 
-    def deletar(self):
-        rotas = self.rotas("deletar")
-        self.limite.criar()
-        escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
+    def mostrar(self):
+        nome_funcao = "mostrar"
 
+        rotas = self.rotas(nome_funcao)
+
+        escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
+        produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
+        self.limite.mostrar(produto.objeto_limite_detalhado())
+
+        self.selecione_rota(rotas, "v", self.listar)
+
+    def deletar(self):
+        nome_funcao = "deletar"
+
+        rotas = self.rotas(nome_funcao)
+
+        escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
         self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
 
         self.selecione_rota(rotas, "v", self.listar)

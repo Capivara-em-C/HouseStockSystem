@@ -52,7 +52,7 @@ class ProdutoPerecivel(ProdutoConsumivel):
         self.atualizar_estoque()
 
     def atualizar_estoque(self):
-        self.estoque.quantidade = self.quantidade_total()
+        self.estoque_quantidade = self.quantidade_total()
 
     def quantidade_total(self):
         quantidade_total = 0
@@ -61,3 +61,9 @@ class ProdutoPerecivel(ProdutoConsumivel):
             quantidade_total += lote.quantidade
 
         return quantidade_total
+
+    def objeto_limite_detalhado(self) -> dict:
+        resp = super().objeto_limite_detalhado()
+        resp["Lotes"] = self.lotes
+
+        return resp

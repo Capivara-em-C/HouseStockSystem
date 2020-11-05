@@ -23,6 +23,6 @@ class LimiteInicio(LimiteAbstrato):
                 " - Adicionar quantidade a um item (a) \n" +
                 " - Remover quantidade de um item (r) \n" +
                 " - Listagem de Produtos (p) \n" +
-                " - Sair (s) \n\n",
+                " - Sair (s) \n\n: ",
             },
         }
