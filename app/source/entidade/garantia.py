@@ -1,6 +1,6 @@
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.helpers.setter import validacao_tipo
-from strtime import str
+
 
 class Garantia(EntidadeAbstrata):
 

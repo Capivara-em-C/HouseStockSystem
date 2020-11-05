@@ -4,12 +4,11 @@ from app.source.exception.rotaInexistenteException import RotaInexistenteExcepti
 
 
 class ControleGarantia(ControleAbstrato):
-
     @staticmethod
-    def classe_limite():
+    def classe_limite() -> type:
         return LimiteInicio
 
-    def rotas(self, nome_funcao: str):
+    def rotas(self, funcao):
         rota = {
             "home": {
                 "a": self.nova_garantia,
@@ -19,8 +18,9 @@ class ControleGarantia(ControleAbstrato):
                 "s": exit,
             },
         }
+
         try:
-            return rota[nome_funcao]
+            return rota[funcao]
         except KeyError:
             raise RotaInexistenteException("Rota passada não existente.")
 
