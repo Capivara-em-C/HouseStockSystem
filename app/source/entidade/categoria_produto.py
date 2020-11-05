@@ -6,13 +6,13 @@ class Categoria(EntidadeAbstrata):
 
     def __init__(self,identificador: int, nome: str):
         super.__init__(identificador)
-        self.nome = nome
+        self.__nome = nome
 
     @property
-    def nome(self):
+    def nome(self) -> str:
         return self.__nome
 
     @nome.setter
-    def nome(self, nome):
+    def nome(self, nome: str):
         validacao_tipo(nome, str)
         self.__nome = nome
