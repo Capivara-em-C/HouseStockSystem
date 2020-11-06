@@ -40,7 +40,7 @@ class LimiteCategoria(LimiteAbstrato):
 
     def cabecalho(self):
         super().cabecalho()
-        print("=================>  Listagem de Categorias  <=================")
+        print("================> Listagem de Categorias <================")
         super().cabecalho()
         print("")
 
