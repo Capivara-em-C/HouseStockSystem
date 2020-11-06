@@ -1,10 +1,12 @@
 from app.source.controle.controle_abstrato import ControleAbstrato
-from app.source.limite.limite_inicio import LimiteInicio
-from app.source.exception.rotaInexistenteException import RotaInexistenteException
-from app.source.controle.controle_produto import ControleProduto
-from app.source.limite.limite_produto import LimiteProduto
 from app.source.controle.controle_categoria import ControleCategoria
+from app.source.controle.controle_produto import ControleProduto
+from app.source.controle.controle_registro import ControleRegistro
+from app.source.exception.rotaInexistenteException import RotaInexistenteException
 from app.source.limite.limite_categoria import LimiteCategoria
+from app.source.limite.limite_inicio import LimiteInicio
+from app.source.limite.limite_produto import LimiteProduto
+from app.source.limite.limite_registro import LimiteRegistro
 
 
 class ControleInicio(ControleAbstrato):
@@ -19,7 +21,8 @@ class ControleInicio(ControleAbstrato):
                 "r": self.consumir_estoque,
                 "p": self.produto,
                 "c": self.categoria,
-                "s": exit,
+                "r": self.registros,
+                "s": exit
             },
         }
 
@@ -32,6 +35,12 @@ class ControleInicio(ControleAbstrato):
         rotas = self.rotas("home")
         self.limite.home()
         opcao = self.limite.selecionar_opcao("home")["menu"]
+
+        ControleRegistro.adiciona_registro(
+            "Moveu da Home.",
+            f"Requisição enviada pelo usuário:\n{opcao}"
+        )
+
         self.selecione_rota(rotas, opcao, self.home)
         self.home()
 
@@ -52,3 +61,7 @@ class ControleInicio(ControleAbstrato):
         controle_categoria.entidades = self.entidades
         controle_categoria.listar()
         self.entidades = controle_categoria.entidades
+
+    @staticmethod
+    def registros():
+        ControleRegistro(LimiteRegistro()).Listar()
