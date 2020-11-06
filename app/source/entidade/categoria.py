@@ -15,3 +15,9 @@ class Categoria(EntidadeAbstrata):
     def nome(self, nome: str):
         validacao_tipo(nome, str)
         self.__nome = nome
+
+    def objeto_limite(self) -> dict:
+        return {
+            "Nº Referencia": self.identificador,
+            "Nome": self.nome,
+        }

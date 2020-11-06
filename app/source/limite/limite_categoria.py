@@ -9,7 +9,6 @@ class LimiteCategoria(LimiteAbstrato):
                 "menu": "Opções: \n" +
                 " - Criar nova categoria (c) \n" +
                 " - Atualizar categoria (a) \n" +
-                " - Mostrar detalhes da categoria (m) \n" +
                 " - Deletar categoria (d) \n" +
                 " - Voltar (v) \n\n",
             },
