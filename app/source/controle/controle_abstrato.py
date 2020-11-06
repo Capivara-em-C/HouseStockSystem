@@ -14,9 +14,12 @@ class ControleAbstrato(ABC):
 
     def __init__(
             self,
-            limite: LimiteAbstrato,
+            limite: LimiteAbstrato or None = None,
             entidades: dict or None = None
     ):
+        if limite is None:
+            limite = self.classe_limite()()
+
         self.limite = limite
         self.entidades = entidades
 

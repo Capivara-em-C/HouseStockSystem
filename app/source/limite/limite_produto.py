@@ -22,6 +22,7 @@ class LimiteProduto(LimiteAbstrato):
                 "prioridade": "Prioridade: ",
                 "estoque": "Quantidade em estoque: ",
                 "estoque_minimo": "Estoque mínimo: ",
+                "tem_categorias": "Tem categorias? ",
                 "eh_perecivel": "É perecível? "
             },
             "mostrar": {
@@ -29,6 +30,9 @@ class LimiteProduto(LimiteAbstrato):
             },
             "deletar": {
                 "codigo_referencia": "Código de referência: "
+            },
+            "categorias": {
+                "codigo_referencia": "Código de referência: ",
             }
         }
 
@@ -62,7 +66,25 @@ class LimiteProduto(LimiteAbstrato):
 
         if isinstance(produto, dict):
             for atributo in produto:
-                print("{atributo}: {valor}".format(atributo=atributo, valor=produto.get(atributo)))
+                valor = produto.get(atributo)
+
+                if isinstance(valor, dict):
+                    print(f"{atributo}: ")
+                    for entidade in valor:
+                        entidade = valor.get(entidade)
+
+                        for propriedade in entidade:
+                            print("- {atributo}: {valor}".format(atributo=propriedade, valor=entidade.get(propriedade)))
+
+                        print("----------------------------------------")
+                    continue
+
+                print("{atributo}: {valor}".format(atributo=atributo, valor=valor))
+
+    def categorias(self):
+        super().cabecalho()
+        print("===========>  Adicionar categorias no produto   <===========")
+        self.cabecalho()
 
     def cabecalho(self):
         super().cabecalho()

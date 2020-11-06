@@ -1,6 +1,7 @@
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_lote import ControleLote
 from app.source.controle.controle_registro import ControleRegistro
+from app.source.controle.controle_categoria import ControleCategoria
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.entidade.produto_perecivel import ProdutoPerecivel
@@ -44,6 +45,9 @@ class ControleProduto(ControleAbstrato):
         escolhas = self.limite.selecionar_opcao("formulario")
         produto = self.lista_para_produto(escolhas)
 
+        if escolhas.get("tem_categorias"):
+            produto.categorias = self.categorias()
+
         if isinstance(produto, ProdutoPerecivel):
             produto.lotes = ControleLote(LimiteLote()).listar()
 
@@ -55,10 +59,14 @@ class ControleProduto(ControleAbstrato):
 
     def atualizar(self):
         nome_funcao = "atualizar"
+
         rotas = self.rotas(nome_funcao)
         self.limite.atualizar()
         escolhas = self.limite.selecionar_opcao("formulario")
         produto = self.lista_para_produto(escolhas)
+
+        if escolhas.get("tem_categorias"):
+            produto.categorias = self.categorias()
 
         if isinstance(produto, ProdutoPerecivel):
             produto.lotes = ControleLote(LimiteLote()).listar()
@@ -119,6 +127,22 @@ class ControleProduto(ControleAbstrato):
         )
 
         self.selecione_rota(rotas, "v", self.listar)
+
+    def categorias(self, categorias: dict or None = None):
+        if categorias is None:
+            categorias = {}
+
+        self.limite.categorias()
+        escolha = self.limite.selecionar_opcao("categorias")["codigo_referencia"]
+        categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha)
+
+        if categoria is not None:
+            categorias[categoria.identificador] = categoria
+            self.categorias(categorias)
+
+        return categorias
+
+
 
     def voltar_listagem(self) -> None:
         return None
