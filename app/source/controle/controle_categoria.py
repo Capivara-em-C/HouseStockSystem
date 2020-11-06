@@ -126,6 +126,10 @@ class ControleCategoria(ControleAbstrato):
             if registro_categoria is not None:
                 registro_categoria = registro_categoria.objeto_limite()
 
+            for entidade in self.entidades["produtos"].values():
+                if entidade.categorias.get(escolha) is not None:
+                    del(entidade.categorias[escolha])
+
             self.remover_entidade(self.CATEGORIA_ENTIDADE, self.entidades[self.CATEGORIA_ENTIDADE].get(escolha))
 
             ControleRegistro.adiciona_registro(
