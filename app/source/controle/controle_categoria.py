@@ -5,12 +5,9 @@ from app.source.helpers.setter import validacao_tipo
 from app.source.entidade.categoria import Categoria
 from app.source.entidade.registro import Registro
 from app.source.controle.controle_registro import ControleRegistro
-from datetime import datetime
-
 
 
 class ControleCategoria(ControleAbstrato):
-
     @staticmethod
     def classe_limite() -> type:
         return LimiteCategoria
@@ -22,6 +19,12 @@ class ControleCategoria(ControleAbstrato):
         self.limite.listar(self.exportar_entidades())
 
         opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
+
+        ControleRegistro.adiciona_registro(
+            "Moveu da Listagem de Categorias.",
+            f"Requisição enviada pelo usuário:\n{opcao}"
+        )
+
         retorno = self.selecione_rota(rotas, opcao, self.listar)
 
         if retorno is not None:
@@ -34,8 +37,7 @@ class ControleCategoria(ControleAbstrato):
 
         self.adicionar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
 
-        hora = datetime.now()
-        ControleRegistro.adiciona_registro("Criou categoria as: ", str(hora))
+        ControleRegistro.adiciona_registro("Criou Categoria.", f"Requisição enviada pelo usuário:\n{escolhas}")
 
         self.selecione_rota(rotas, "v", self.listar)
 
@@ -43,11 +45,16 @@ class ControleCategoria(ControleAbstrato):
         rotas = self.rotas("atualizar")
         self.limite.criar()
         escolhas = self.limite.selecionar_opcao("atualizar")
+        registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE]\
+            .get(escolhas.get("codigo_referencia"))\
+            .objeto_limite()
 
         self.atualizar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
 
-        hora = datetime.now()
-        ControleRegistro.adiciona_registro("Atualizou categoria as: ", str(hora))
+        ControleRegistro.adiciona_registro(
+            "Atualizou categoria.",
+            f"Requisição enviada pelo usuário:\n{escolhas}\n\nCategoria Antes da alteração:\n{registro_categoria}"
+        )
 
         self.selecione_rota(rotas, "v", self.listar)
 
@@ -55,11 +62,14 @@ class ControleCategoria(ControleAbstrato):
         rotas = self.rotas("deletar")
         self.limite.criar()
         escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
+        registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha).objeto_limite()
 
         self.remover_entidade(self.CATEGORIA_ENTIDADE, self.entidades[self.CATEGORIA_ENTIDADE].get(escolha))
 
-        hora = datetime.now()
-        ControleRegistro.adiciona_registro("Deletou categoria as: ", str(hora))
+        ControleRegistro.adiciona_registro(
+            "Deletou categoria.",
+            f"Requisição enviada pelo usuário:\n{escolha}\n\nCategoria deletada:\n{registro_categoria}"
+        )
 
         self.selecione_rota(rotas, "v", self.listar)
 
