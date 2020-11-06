@@ -7,7 +7,6 @@ def validacao_tipo(propriedade, tipo: type):
             "Propriedade passada[" + propriedade.__class__.__name__ + "] " + " não é um do tipo[ " + tipo.__name__ + "]."
         )
 
-
 def validacao_multipla_tipo_e(propriedade, tipos: list):
     validacao_tipo(tipos, list)
 
