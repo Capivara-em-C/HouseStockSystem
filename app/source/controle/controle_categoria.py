@@ -1,44 +1,73 @@
 from app.source.controle.controle_abstrato import ControleAbstrato
-from app.source.limite.limite_inicio import LimiteInicio
+from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
+from app.source.helpers.setter import validacao_tipo
+from app.source.entidade.categoria import Categoria
+
+
 
 
 class ControleCategoria(ControleAbstrato):
 
     @staticmethod
     def classe_limite() -> type:
-        return LimiteInicio
+        return LimiteCategoria
 
-    def rotas(self, nome_funcao: str):
-        rota = {
-            "home": {
-                "n": self.nova_categoria,
-                "l": self.listar_categoria,
-                "d": self.deletar_categoria,
-                "e": self.editar_categoria,
-                "s": exit,
-            },
-        }
+    def listar(self):
+        nome_funcao = "listar"
 
-        try:
-            return rota[nome_funcao]
-        except KeyError:
-            raise RotaInexistenteException("Rota passada não existente.")
+        rotas = self.rotas(nome_funcao)
+        self.limite.listar(self.exportar_entidades())
 
-    def home(self):
-        rotas = self.rotas("home")
-        self.limite.home()
-        opcao = self.limite.selecionar_opcao()[0]
-        self.selecione_opcao(rotas, opcao, self.home)
+        opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
+        retorno = self.selecione_rota(rotas, opcao, self.listar)
 
-    def nova_categoria(self):
-        pass
+        if retorno is not None:
+            self.listar()
 
-    def listar_categoria(self):
-        pass
+    def criar(self):
+        rotas = self.rotas("criar")
+        self.limite.criar()
+        escolhas = self.limite.selecionar_opcao("criar")
 
-    def editar_categoria(self):
-        pass
+        self.adicionar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
+        print(self.entidades)
+        self.selecione_rota(rotas, "v", self.listar)
 
-    def deletar_categoria(self):
-        pass
+    def atualizar(self):
+        rotas = self.rotas("atualizar")
+        self.limite.criar()
+        escolhas = self.limite.selecionar_opcao("atualizar")
+
+        self.atualizar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
+    def deletar(self):
+        rotas = self.rotas("deletar")
+        self.limite.criar()
+        escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
+
+        self.remover_entidade(self.CATEGORIA_ENTIDADE, self.entidades[self.CATEGORIA_ENTIDADE].get(escolha))
+
+        self.selecione_rota(rotas, "v", self.listar)
+
+    def voltar_listagem(self) -> None:
+        return None
+
+    @staticmethod
+    def lista_para_categoria(lista: dict) -> Categoria:
+        validacao_tipo(lista, dict)
+
+        return Categoria(
+            lista["codigo_referencia"],
+            lista["nome"],
+        )
+
+    def exportar_entidades(self) -> list:
+        resp = []
+
+        for chave in self.entidades[self.CATEGORIA_ENTIDADE]:
+            resp.append(self.entidades[self.CATEGORIA_ENTIDADE][chave].objeto_limite())
+
+        return resp
