@@ -64,8 +64,10 @@ class ControleProduto(ControleAbstrato):
             produto.lotes = ControleLote(LimiteLote()).listar()
 
         registro_produto = self.entidades[self.PRODUTO_ENTIDADE]\
-            .get(escolhas.get("codigo_referencia"))\
-            .objeto_limite_detalhado()
+            .get(escolhas.get("codigo_referencia"))
+
+        if registro_produto is not None:
+            registro_produto = registro_produto.objeto_limite_detalhado()
 
         self.atualizar_entidade(self.PRODUTO_ENTIDADE, produto)
 
@@ -81,15 +83,16 @@ class ControleProduto(ControleAbstrato):
         rotas = self.rotas(nome_funcao)
         escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
 
-        produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha).objeto_limite_detalhado()
-        if produto.get("lotes") is not None:
-            produto["lotes"] = self.lotes_para_limite(produto["lotes"])
+        produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
+
+        if produto is not None:
+            produto = produto.objeto_limite_detalhado()
 
         self.limite.mostrar(produto)
 
         ControleRegistro.adiciona_registro(
             "Visualizou detalhes de um produto.",
-            f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto visto:\n{produto.objeto_limite_detalhado()}"
+            f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto visto:\n{produto}"
         )
 
         self.selecione_rota(rotas, "v", self.listar)
@@ -104,6 +107,9 @@ class ControleProduto(ControleAbstrato):
         registro_produto = self.entidades[self.PRODUTO_ENTIDADE]\
             .get(escolha)\
             .objeto_limite_detalhado()
+
+        if registro_produto is not None:
+            registro_produto = registro_produto.objeto_limite_detalhado()
 
         self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
 
@@ -145,14 +151,3 @@ class ControleProduto(ControleAbstrato):
             int(lista["estoque"]),
             int(lista["estoque_minimo"]),
         )
-
-    @staticmethod
-    def lotes_para_limite(lotes: dict):
-        validacao_tipo(lotes, dict)
-
-        resp = {}
-        for chave in lotes:
-            lote = lotes[chave]
-            resp[chave] = lote.objeto_limite()
-
-        return resp

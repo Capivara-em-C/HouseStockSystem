@@ -93,7 +93,6 @@ class LimiteAbstrato(ABC):
         for coluna in linha:
             tamanho_coluna = tamanho_colunas[cont]
             str_coluna = str(coluna)
-            cont += 1
 
             tamanho_coluna -= len(str_coluna)
             espacos_esquerda = tamanho_coluna // 2
@@ -103,8 +102,10 @@ class LimiteAbstrato(ABC):
 
             linha_retorno += margem_esquerda + str(coluna) + margem_direita
 
-            if linha.index(coluna) != len(linha) - 1:
+            if cont != len(linha) - 1:
                 linha_retorno += "|"
+
+            cont += 1
 
         return linha_retorno
 
