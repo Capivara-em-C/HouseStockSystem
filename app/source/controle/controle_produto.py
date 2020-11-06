@@ -4,6 +4,7 @@ from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.limite.limite_produto import LimiteProduto
 from app.source.helpers.setter import validacao_tipo
 from app.source.controle.controle_categoria import Categoria, ControleCategoria
+from app.source.helpers.existe_categoria import existe_categoria
 import string
 import random
 
@@ -79,7 +80,7 @@ class ControleProduto(ControleAbstrato):
     def lista_para_produto(lista: dict) -> ProdutoAbstrato:
         validacao_tipo(lista, dict)
 
-        if lista["categoria"] in ControleCategoria.entidades["categorias"].keys():
+        if existe_categoria(lista['categoria'], ControleAbstrato.entidades):
             if int(lista["estoque"]) > 0:
                 return ProdutoConsumivel(
                     lista["codigo_referencia"],
