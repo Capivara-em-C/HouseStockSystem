@@ -138,11 +138,9 @@ class ControleProduto(ControleAbstrato):
 
         if categoria is not None:
             categorias[categoria.identificador] = categoria
-            self.categorias(categorias)
+            categorias = self.categorias(categorias)
 
         return categorias
-
-
 
     def voltar_listagem(self) -> None:
         return None
