@@ -10,7 +10,9 @@ class EntidadeAbstrata(ABC):
         pass
 
     def objeto_limite_detalhado(self) -> dict:
-        pass
+        return {
+            "Código de Referência": self.identificador
+        }
 
     @property
     def identificador(self) -> str:

@@ -9,6 +9,7 @@ from app.source.helpers.setter import validacao_tipo
 class ControleAbstrato(ABC):
     # Lista de Entidades que salvas neste controle
     PRODUTO_ENTIDADE = "produtos"
+    LOTE_ENTIDADE = "lote"
 
     def __init__(
             self,
@@ -71,8 +72,8 @@ class ControleAbstrato(ABC):
     def deletar(self):
         raise Exception("Método [Deletar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
-    def voltar_listagem(self):
-        exit(0)
+    def voltar_listagem(self) -> None:
+        return None
 
     def exportar_entidades(self) -> list:
         resp = []
@@ -90,7 +91,8 @@ class ControleAbstrato(ABC):
     def entidades(self, listas_entidades: dict or None = None):
         if listas_entidades is None:
             listas_entidades = {
-                self.PRODUTO_ENTIDADE: {}
+                self.PRODUTO_ENTIDADE: {},
+                self.LOTE_ENTIDADE: {},
             }
 
         validacao_tipo(listas_entidades, dict)

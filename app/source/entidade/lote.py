@@ -5,13 +5,11 @@ from app.source.helpers.setter import validacao_tipo
 class Lote(EntidadeAbstrata):
     def __init__(
             self,
-            identificador: str,
+            data_validade: str,
             quantidade: int,
-            data_validade: str
     ):
-        super().__init__(identificador)
-        self.quantidade = quantidade,
-        self.data_validade = data_validade
+        super().__init__(data_validade)
+        self.quantidade = quantidade
 
     @property
     def quantidade(self) -> int:
@@ -24,9 +22,15 @@ class Lote(EntidadeAbstrata):
 
     @property
     def data_validade(self) -> str:
-        return self.__data_validade
+        return self.identificador
 
     @data_validade.setter
     def data_validade(self, data_validade: str):
         validacao_tipo(data_validade, str)
-        self.__data_validade = data_validade
+        self.identificador = data_validade
+
+    def objeto_limite(self) -> dict:
+        return {
+            "Data de validade": self.data_validade,
+            "Quantidade": self.quantidade,
+        }
