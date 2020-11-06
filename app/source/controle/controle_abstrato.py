@@ -10,12 +10,16 @@ class ControleAbstrato(ABC):
     # Lista de Entidades que salvas neste controle
     PRODUTO_ENTIDADE = "produtos"
     CATEGORIA_ENTIDADE = "categoria"
+    LOTE_ENTIDADE = "lote"
 
     def __init__(
             self,
-            limite: LimiteAbstrato,
+            limite: LimiteAbstrato or None = None,
             entidades: dict or None = None
     ):
+        if limite is None:
+            limite = self.classe_limite()()
+
         self.limite = limite
         self.entidades = entidades
 
@@ -72,8 +76,8 @@ class ControleAbstrato(ABC):
     def deletar(self):
         raise Exception("Método [Deletar] não permitido para este controle[%s]".format(self.__class__.__name__))
 
-    def voltar_listagem(self):
-        exit(0)
+    def voltar_listagem(self) -> None:
+        return None
 
     def exportar_entidades(self) -> list:
         resp = []
@@ -93,6 +97,7 @@ class ControleAbstrato(ABC):
             listas_entidades = {
                 self.PRODUTO_ENTIDADE: {},
                 self.CATEGORIA_ENTIDADE: {},
+                self.LOTE_ENTIDADE: {},
             }
 
         validacao_tipo(listas_entidades, dict)

@@ -49,6 +49,6 @@ class ProdutoConsumivel(ProdutoAbstrato):
     def objeto_limite_detalhado(self) -> dict:
         resp = super().objeto_limite_detalhado()
         resp["Quantidade em estoque"] = self.estoque_quantidade
-        resp["Quantidade mínima permitida em estoque"] = self.estoque_minimo
+        resp["Quantidade mínima em estoque"] = self.estoque_minimo
 
         return resp

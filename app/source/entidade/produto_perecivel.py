@@ -29,6 +29,9 @@ class ProdutoPerecivel(ProdutoConsumivel):
             estoque_minimo
         )
 
+        if lotes is None:
+            lotes = {}
+
         self.lotes = lotes
 
     @property
@@ -57,13 +60,24 @@ class ProdutoPerecivel(ProdutoConsumivel):
     def quantidade_total(self):
         quantidade_total = 0
 
-        for lote in self.lotes:
+        for lote in self.lotes.values():
             quantidade_total += lote.quantidade
 
         return quantidade_total
 
     def objeto_limite_detalhado(self) -> dict:
         resp = super().objeto_limite_detalhado()
-        resp["Lotes"] = self.lotes
+        resp["lotes"] = self.lotes_para_limite(self.lotes)
+
+        return resp
+
+    @staticmethod
+    def lotes_para_limite(lotes: dict):
+        validacao_tipo(lotes, dict)
+
+        resp = {}
+        for chave in lotes:
+            lote = lotes[chave]
+            resp[chave] = lote.objeto_limite()
 
         return resp

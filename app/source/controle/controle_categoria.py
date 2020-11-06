@@ -45,9 +45,12 @@ class ControleCategoria(ControleAbstrato):
         rotas = self.rotas("atualizar")
         self.limite.criar()
         escolhas = self.limite.selecionar_opcao("atualizar")
+
         registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE]\
-            .get(escolhas.get("codigo_referencia"))\
-            .objeto_limite()
+            .get(escolhas.get("codigo_referencia"))
+
+        if registro_categoria is not None:
+            registro_categoria = registro_categoria.objeto_limite()
 
         self.atualizar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
 
@@ -62,7 +65,10 @@ class ControleCategoria(ControleAbstrato):
         rotas = self.rotas("deletar")
         self.limite.criar()
         escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
-        registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha).objeto_limite()
+        registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha)
+
+        if registro_categoria is not None:
+            registro_categoria = registro_categoria.objeto_limite()
 
         self.remover_entidade(self.CATEGORIA_ENTIDADE, self.entidades[self.CATEGORIA_ENTIDADE].get(escolha))
 

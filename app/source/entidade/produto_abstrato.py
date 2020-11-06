@@ -1,4 +1,5 @@
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
+from app.source.entidade.categoria import Categoria
 from app.source.helpers.setter import validacao_tipo
 from abc import abstractmethod
 
@@ -61,20 +62,23 @@ class ProdutoAbstrato(EntidadeAbstrata):
     @categorias.setter
     def categorias(self, categorias: dict):
         validacao_tipo(categorias, dict)
+
+        for categoria in categorias.values():
+            validacao_tipo(categoria, Categoria)
+
         self.__categorias = categorias
 
-    # @TODO fazer o link entre entidade Categorias
-    def adicionar_categoria(self, categoria: dict):
-        validacao_tipo(categoria, dict)
-        self.__categorias[categoria["identificador"]] = categoria
+    def adicionar_categoria(self, categoria: Categoria):
+        validacao_tipo(categoria, Categoria)
+        self.__categorias[categoria.identificador] = categoria
 
-    def remover_categoria(self, categoria: dict):
-        validacao_tipo(categoria, dict)
-        del self.__categorias[categoria["identificador"]]
+    def remover_categoria(self, categoria: Categoria):
+        validacao_tipo(categoria, Categoria)
+        del self.__categorias[categoria.identificador]
 
-    def existe_categoria(self, categoria: dict) -> bool:
-        validacao_tipo(categoria, dict)
-        return categoria["identificador"] in self.__categorias.keys()
+    def existe_categoria(self, categoria: Categoria) -> bool:
+        validacao_tipo(categoria, Categoria)
+        return self.categorias[categoria.identificador] in self.__categorias.keys()
 
     @property
     def ultimo_valor(self) -> float:
@@ -107,6 +111,15 @@ class ProdutoAbstrato(EntidadeAbstrata):
             "Nome": self.nome,
             "Descrição": self.descricao,
             "Data de Fabricação": self.data_fabricacao,
-            "Categorias": self.categorias,
+            "Categorias": self.categorias_limite(),
             "Último valor pago": self.ultimo_valor,
         }
+
+    def categorias_limite(self) -> dict:
+        resp = {}
+
+        for chave in self.categorias:
+            categoria = self.categorias[chave]
+            resp[chave] = categoria.objeto_limite()
+
+        return resp
