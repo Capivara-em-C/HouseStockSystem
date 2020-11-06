@@ -3,6 +3,8 @@ from app.source.limite.limite_inicio import LimiteInicio
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
 from app.source.controle.controle_produto import ControleProduto
 from app.source.limite.limite_produto import LimiteProduto
+from app.source.controle.controle_categoria import ControleCategoria
+from app.source.limite.limite_categoria import LimiteCategoria
 
 
 class ControleInicio(ControleAbstrato):
@@ -16,6 +18,7 @@ class ControleInicio(ControleAbstrato):
                 "a": self.nova_compra,
                 "r": self.consumir_estoque,
                 "p": self.produto,
+                "c": self.categoria,
                 "s": exit,
             },
         }
@@ -43,3 +46,9 @@ class ControleInicio(ControleAbstrato):
         controle_produto.entidades = self.entidades
         controle_produto.listar()
         self.entidades = controle_produto.entidades
+
+    def categoria(self):
+        controle_categoria = ControleCategoria(LimiteCategoria())
+        controle_categoria.entidades = self.entidades
+        controle_categoria.listar()
+        self.entidades = controle_categoria.entidades

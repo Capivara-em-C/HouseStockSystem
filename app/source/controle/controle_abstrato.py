@@ -9,6 +9,7 @@ from app.source.helpers.setter import validacao_tipo
 class ControleAbstrato(ABC):
     # Lista de Entidades que salvas neste controle
     PRODUTO_ENTIDADE = "produtos"
+    CATEGORIA_ENTIDADE = "categoria"
     LOTE_ENTIDADE = "lote"
 
     def __init__(
@@ -92,6 +93,7 @@ class ControleAbstrato(ABC):
         if listas_entidades is None:
             listas_entidades = {
                 self.PRODUTO_ENTIDADE: {},
+                self.CATEGORIA_ENTIDADE: {},
                 self.LOTE_ENTIDADE: {},
             }
 
