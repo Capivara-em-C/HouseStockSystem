@@ -13,7 +13,7 @@ class LimiteProduto(LimiteAbstrato):
                 " - Deletar produto (d) \n" +
                 " - Voltar (v) \n\n: ",
             },
-            "criar": {
+            "formulario": {
                 "codigo_referencia": "Código de referência: ",
                 "nome": "Nome: ",
                 "descricao": "Descrição: ",
@@ -22,16 +22,7 @@ class LimiteProduto(LimiteAbstrato):
                 "prioridade": "Prioridade: ",
                 "estoque": "Quantidade em estoque: ",
                 "estoque_minimo": "Estoque mínimo: ",
-            },
-            "atualizar": {
-                "codigo_referencia": "Código de referência: ",
-                "nome": "Nome: ",
-                "descricao": "Descrição: ",
-                "data_fabricacao": "Data de fabricação: ",
-                "valor": "Valor: ",
-                "prioridade": "Prioridade: ",
-                "estoque": "Quantidade em estoque: ",
-                "estoque_minimo": "Estoque mínimo: ",
+                "eh_perecivel": "É perecível? "
             },
             "mostrar": {
                 "codigo_referencia": "Código de referência: "

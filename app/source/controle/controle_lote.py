@@ -43,7 +43,7 @@ class ControleLote(ControleAbstrato):
 
         rotas = self.rotas(nome_funcao)
 
-        escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
+        escolha = self.limite.selecionar_opcao(nome_funcao)["data_validade"]
         self.remover_entidade(self.LOTE_ENTIDADE, self.entidades[self.LOTE_ENTIDADE].get(escolha))
 
         self.selecione_rota(rotas, "v", self.listar)

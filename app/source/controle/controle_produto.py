@@ -26,6 +26,8 @@ class ControleProduto(ControleAbstrato):
         opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
         retorno = self.selecione_rota(rotas, opcao, self.listar)
 
+        print(self.entidades[self.LOTE_ENTIDADE])
+
         if retorno is not None:
             self.listar()
 
@@ -34,10 +36,11 @@ class ControleProduto(ControleAbstrato):
 
         rotas = self.rotas(nome_funcao)
         self.limite.criar()
-        escolhas = self.limite.selecionar_opcao(nome_funcao)
+        escolhas = self.limite.selecionar_opcao("formulario")
         produto = self.lista_para_produto(escolhas)
 
-        produto.lotes = ControleLote(LimiteLote()).listar()
+        if isinstance(produto, ProdutoPerecivel):
+            produto.lotes = ControleLote(LimiteLote()).listar()
 
         self.adicionar_entidade(self.PRODUTO_ENTIDADE, produto)
 
@@ -47,8 +50,11 @@ class ControleProduto(ControleAbstrato):
         nome_funcao = "atualizar"
         rotas = self.rotas(nome_funcao)
         self.limite.atualizar()
-        escolhas = self.limite.selecionar_opcao(nome_funcao)
+        escolhas = self.limite.selecionar_opcao("formulario")
         produto = self.lista_para_produto(escolhas)
+
+        if isinstance(produto, ProdutoPerecivel):
+            produto.lotes = ControleLote(LimiteLote()).listar()
 
         self.atualizar_entidade(self.PRODUTO_ENTIDADE, produto)
 
@@ -84,7 +90,7 @@ class ControleProduto(ControleAbstrato):
     def lista_para_produto(lista: dict) -> ProdutoAbstrato:
         validacao_tipo(lista, dict)
 
-        if int(lista["estoque"]) > 0:
+        if lista.get("eh_perecivel"):
             return ProdutoPerecivel(
                 lista["codigo_referencia"],
                 lista["nome"],
@@ -96,6 +102,18 @@ class ControleProduto(ControleAbstrato):
                 int(lista["estoque"]),
                 int(lista["estoque_minimo"]),
             )
+
+        return ProdutoConsumivel(
+            lista["codigo_referencia"],
+            lista["nome"],
+            lista["descricao"],
+            lista["data_fabricacao"],
+            None,
+            float(lista["valor"]),
+            int(lista["prioridade"]),
+            int(lista["estoque"]),
+            int(lista["estoque_minimo"]),
+        )
 
     @staticmethod
     def lotes_para_limite(lotes: dict):
