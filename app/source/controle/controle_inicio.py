@@ -5,7 +5,7 @@ from app.source.controle.controle_produto import ControleProduto
 from app.source.limite.limite_produto import LimiteProduto
 from app.source.controle.controle_categoria import ControleCategoria
 from app.source.limite.limite_categoria import LimiteCategoria
-
+from app.source.controle.controle_registro import ControleRegistro
 
 class ControleInicio(ControleAbstrato):
     @staticmethod
@@ -19,7 +19,8 @@ class ControleInicio(ControleAbstrato):
                 "r": self.consumir_estoque,
                 "p": self.produto,
                 "c": self.categoria,
-                "s": exit,
+                "r": self.registros,
+                "s": exit
             },
         }
 
@@ -52,3 +53,6 @@ class ControleInicio(ControleAbstrato):
         controle_categoria.entidades = self.entidades
         controle_categoria.listar()
         self.entidades = controle_categoria.entidades
+
+    def registros(self):
+        print(ControleRegistro.mostra_registros())

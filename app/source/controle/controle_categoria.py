@@ -3,7 +3,9 @@ from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.exception.rotaInexistenteException import RotaInexistenteException
 from app.source.helpers.setter import validacao_tipo
 from app.source.entidade.categoria import Categoria
-
+from app.source.entidade.registro import Registro
+from app.source.controle.controle_registro import ControleRegistro
+from datetime import datetime
 
 
 
@@ -31,7 +33,10 @@ class ControleCategoria(ControleAbstrato):
         escolhas = self.limite.selecionar_opcao("criar")
 
         self.adicionar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
-        print(self.entidades)
+
+        hora = datetime.now()
+        ControleRegistro.adiciona_registro("Criou categoria as: ", str(hora))
+
         self.selecione_rota(rotas, "v", self.listar)
 
     def atualizar(self):
@@ -41,6 +46,9 @@ class ControleCategoria(ControleAbstrato):
 
         self.atualizar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
 
+        hora = datetime.now()
+        ControleRegistro.adiciona_registro("Atualizou categoria as: ", str(hora))
+
         self.selecione_rota(rotas, "v", self.listar)
 
     def deletar(self):
@@ -49,6 +57,9 @@ class ControleCategoria(ControleAbstrato):
         escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
 
         self.remover_entidade(self.CATEGORIA_ENTIDADE, self.entidades[self.CATEGORIA_ENTIDADE].get(escolha))
+
+        hora = datetime.now()
+        ControleRegistro.adiciona_registro("Deletou categoria as: ", str(hora))
 
         self.selecione_rota(rotas, "v", self.listar)
 

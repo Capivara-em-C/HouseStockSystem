@@ -3,6 +3,8 @@ from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.limite.limite_produto import LimiteProduto
 from app.source.helpers.setter import validacao_tipo
+from app.source.controle.controle_registro import ControleRegistro
+from datetime import datetime
 
 
 class ControleProduto(ControleAbstrato):
@@ -35,6 +37,9 @@ class ControleProduto(ControleAbstrato):
 
         self.adicionar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
 
+        hora = datetime.now()
+        ControleRegistro.adiciona_registro("Criou produto as: ", str(hora))
+
         self.selecione_rota(rotas, "v", self.listar)
 
     def atualizar(self):
@@ -45,6 +50,9 @@ class ControleProduto(ControleAbstrato):
         escolhas = self.limite.selecionar_opcao(nome_funcao)
 
         self.atualizar_entidade(self.PRODUTO_ENTIDADE, self.lista_para_produto(escolhas))
+
+        hora = datetime.now()
+        ControleRegistro.adiciona_registro("Atualizou produto as: ", str(hora))
 
         self.selecione_rota(rotas, "v", self.listar)
 
@@ -66,6 +74,9 @@ class ControleProduto(ControleAbstrato):
 
         escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
         self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
+
+        hora = datetime.now()
+        ControleRegistro.adiciona_registro("Deletou produto as: ", str(hora))
 
         self.selecione_rota(rotas, "v", self.listar)
 
