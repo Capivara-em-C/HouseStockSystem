@@ -44,12 +44,6 @@ class ControleInicio(ControleAbstrato):
         self.selecione_rota(rotas, opcao, self.home)
         self.home()
 
-    def nova_compra(self):
-        pass
-
-    def consumir_estoque(self):
-        pass
-
     def produto(self):
         controle_produto = ControleProduto(LimiteProduto())
         controle_produto.entidades = self.entidades
