@@ -3,6 +3,9 @@ from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.limite.limite_produto import LimiteProduto
 from app.source.helpers.setter import validacao_tipo
+from app.source.controle.controle_categoria import Categoria, ControleCategoria
+import string
+import random
 
 
 class ControleProduto(ControleAbstrato):
@@ -76,15 +79,32 @@ class ControleProduto(ControleAbstrato):
     def lista_para_produto(lista: dict) -> ProdutoAbstrato:
         validacao_tipo(lista, dict)
 
-        if int(lista["estoque"]) > 0:
-            return ProdutoConsumivel(
-                lista["codigo_referencia"],
-                lista["nome"],
-                lista["descricao"],
-                lista["data_fabricacao"],
-                None,
-                float(lista["valor"]),
-                int(lista["prioridade"]),
-                int(lista["estoque"]),
-                int(lista["estoque_minimo"]),
-            )
+        if lista["categoria"] in ControleCategoria.entidades["categorias"].keys():
+            if int(lista["estoque"]) > 0:
+                return ProdutoConsumivel(
+                    lista["codigo_referencia"],
+                    lista["nome"],
+                    lista["descricao"],
+                    lista["data_fabricacao"],
+                    float(lista["valor"]),
+                    int(lista["prioridade"]),
+                    lista["categoria"],
+                    int(lista["estoque"]),
+                    int(lista["estoque_minimo"]),
+                )
+        else:
+            letras = string.ascii_uppercase
+            codigo = ''.join(random.choice(letras) for _ in range(4))
+            ControleCategoria.entidades[codigo] = Categoria(random.randint(100, 1000), lista["categoria"])
+            if int(lista["estoque"]) > 0:
+                return ProdutoConsumivel(
+                    lista["codigo_referencia"],
+                    lista["nome"],
+                    lista["descricao"],
+                    lista["data_fabricacao"],
+                    float(lista["valor"]),
+                    int(lista["prioridade"]),
+                    lista["categoria"],
+                    int(lista["estoque"]),
+                    int(lista["estoque_minimo"]),
+                )

@@ -71,3 +71,5 @@ class ControleCategoria(ControleAbstrato):
             resp.append(self.entidades[self.CATEGORIA_ENTIDADE][chave].objeto_limite())
 
         return resp
+
+
