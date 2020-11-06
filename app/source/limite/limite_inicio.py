@@ -24,6 +24,7 @@ class LimiteInicio(LimiteAbstrato):
                 " - Remover quantidade de um item (r) \n" +
                 " - Listagem de Produtos (p) \n" +
                 " - Listagem de Categorias (c) \n" +
+                " - Registros (r) \n" +
                 " - Sair (s) \n\n: ",
             },
         }
