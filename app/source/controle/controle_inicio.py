@@ -2,11 +2,14 @@ from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_categoria import ControleCategoria
 from app.source.controle.controle_produto import ControleProduto
 from app.source.controle.controle_registro import ControleRegistro
-from app.source.exception.rotaInexistenteException import RotaInexistenteException
+from app.source.exception.rota_inexistente_exception import RotaInexistenteException
+from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.limite.limite_inicio import LimiteInicio
 from app.source.limite.limite_produto import LimiteProduto
 from app.source.limite.limite_registro import LimiteRegistro
+from traceback import format_exc
 
 
 class ControleInicio(ControleAbstrato):
@@ -17,8 +20,6 @@ class ControleInicio(ControleAbstrato):
     def rotas(self, nome_funcao):
         rota = {
             "home": {
-                "a": self.nova_compra,
-                "r": self.consumir_estoque,
                 "p": self.produto,
                 "c": self.categoria,
                 "r": self.registros,
@@ -32,36 +33,97 @@ class ControleInicio(ControleAbstrato):
             raise RotaInexistenteException("Rota passada não existente.")
 
     def home(self):
-        rotas = self.rotas("home")
-        self.limite.home()
-        opcao = self.limite.selecionar_opcao("home")["menu"]
+        try:
+            rotas = self.rotas("home")
+            self.limite.home()
+            opcao = self.limite.selecionar_opcao("home")["menu"]
 
-        ControleRegistro.adiciona_registro(
-            "Moveu da Home.",
-            f"Requisição enviada pelo usuário:\n{opcao}"
-        )
+            ControleRegistro.adiciona_registro(
+                "Moveu da Home.",
+                f"Requisição enviada pelo usuário:\n{opcao}"
+            )
 
-        self.selecione_rota(rotas, opcao, self.home)
-        self.home()
-
-    def nova_compra(self):
-        pass
-
-    def consumir_estoque(self):
-        pass
+            self.selecione_rota(rotas, opcao, self.home)
+            self.home()
+        except (
+            RotaInexistenteException,
+            TipoNaoCompativelException,
+            CodigoReferenciaDuplicadoException
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
     def produto(self):
-        controle_produto = ControleProduto(LimiteProduto())
-        controle_produto.entidades = self.entidades
-        controle_produto.listar()
-        self.entidades = controle_produto.entidades
+        try:
+            controle_produto = ControleProduto(LimiteProduto())
+            controle_produto.entidades = self.entidades
+            controle_produto.listar()
+            self.entidades = controle_produto.entidades
+        except (
+            RotaInexistenteException,
+            TipoNaoCompativelException,
+            CodigoReferenciaDuplicadoException
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
     def categoria(self):
-        controle_categoria = ControleCategoria(LimiteCategoria())
-        controle_categoria.entidades = self.entidades
-        controle_categoria.listar()
-        self.entidades = controle_categoria.entidades
+        try:
+            controle_categoria = ControleCategoria(LimiteCategoria())
+            controle_categoria.entidades = self.entidades
+            controle_categoria.listar()
+            self.entidades = controle_categoria.entidades
+        except (
+            RotaInexistenteException,
+            TipoNaoCompativelException,
+            CodigoReferenciaDuplicadoException
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    @staticmethod
-    def registros():
-        ControleRegistro(LimiteRegistro()).Listar()
+    def registros(self):
+        try:
+            ControleRegistro(LimiteRegistro()).Listar()
+        except (
+            RotaInexistenteException,
+            TipoNaoCompativelException,
+            CodigoReferenciaDuplicadoException
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())

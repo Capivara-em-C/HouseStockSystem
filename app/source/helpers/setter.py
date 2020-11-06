@@ -1,4 +1,4 @@
-from app.source.exception.tipoNaoCompativelException import TipoNaoCompativelException
+from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 
 
 def validacao_tipo(propriedade, tipo: type):
