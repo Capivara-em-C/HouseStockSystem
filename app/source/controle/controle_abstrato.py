@@ -1,13 +1,14 @@
 from abc import ABC
+
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
-from app.source.limite.limite_abstrato import LimiteAbstrato
-from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.helpers.setter import validacao_tipo
+from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
 class ControleAbstrato(ABC):
-    # Lista de Entidades que salvas neste controle
+    # Lista de entity que salvas neste controle
     PRODUTO_ENTIDADE = "produtos"
     CATEGORIA_ENTIDADE = "categoria"
     LOTE_ENTIDADE = "lote"

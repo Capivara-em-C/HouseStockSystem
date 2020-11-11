@@ -1,8 +1,9 @@
-from app.source.helpers.setter import validacao_tipo
 from datetime import datetime
 
+from app.source.helpers.setter import validacao_tipo
 
-class Registro():
+
+class Registro:
     def __init__(
             self,
             titulo: str,
