@@ -165,9 +165,7 @@ class ControleProduto(ControleAbstrato):
             nome_funcao = "deletar"
             rotas = self.rotas(nome_funcao)
             escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
-            registro_produto = self.entidades[self.PRODUTO_ENTIDADE]\
-                .get(escolha)\
-                .objeto_limite_detalhado()
+            registro_produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
 
             if registro_produto is not None:
                 registro_produto = registro_produto.objeto_limite_detalhado()
