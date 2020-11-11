@@ -3,11 +3,11 @@ from traceback import format_exc
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_lote import ControleLote
 from app.source.controle.controle_registro import ControleRegistro
-from app.source.controle.controle_categoria import ControleCategoria
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.entidade.produto_perecivel import ProdutoPerecivel
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
@@ -25,22 +25,38 @@ class ControleProduto(ControleAbstrato):
         return ProdutoAbstrato
 
     def listar(self):
-        nome_funcao = "listar"
+        try:
+            nome_funcao = "listar"
 
-        rotas = self.rotas(nome_funcao)
-        self.limite.listar(self.exportar_entidades())
+            rotas = self.rotas(nome_funcao)
+            self.limite.listar(self.exportar_entidades())
 
-        opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
+            opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
 
-        ControleRegistro.adiciona_registro(
-            "Moveu da Listagem de Produtos.",
-            f"Requisição enviada pelo usuário:\n{opcao}"
-        )
+            ControleRegistro.adiciona_registro(
+                "Moveu da Listagem de Produtos.",
+                f"Requisição enviada pelo usuário:\n{opcao}"
+            )
 
-        retorno = self.selecione_rota(rotas, opcao, self.listar)
+            retorno = self.selecione_rota(rotas, opcao, self.listar)
 
-        if retorno is not None:
-            self.listar()
+            if retorno is not None:
+                self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
     def criar(self):
         try:
@@ -63,9 +79,10 @@ class ControleProduto(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -109,9 +126,10 @@ class ControleProduto(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -144,9 +162,8 @@ class ControleProduto(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -178,9 +195,10 @@ class ControleProduto(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())

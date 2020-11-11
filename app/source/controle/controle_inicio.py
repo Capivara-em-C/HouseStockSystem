@@ -1,15 +1,15 @@
+from traceback import format_exc
+
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_categoria import ControleCategoria
 from app.source.controle.controle_produto import ControleProduto
 from app.source.controle.controle_registro import ControleRegistro
+from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
-from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
-from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.limite.limite_inicio import LimiteInicio
 from app.source.limite.limite_produto import LimiteProduto
 from app.source.limite.limite_registro import LimiteRegistro
-from traceback import format_exc
 
 
 class ControleInicio(ControleAbstrato):
@@ -46,9 +46,8 @@ class ControleInicio(ControleAbstrato):
             self.selecione_rota(rotas, opcao, self.home)
             self.home()
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -69,9 +68,8 @@ class ControleInicio(ControleAbstrato):
             controle_produto.listar()
             self.entidades = controle_produto.entidades
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -92,9 +90,8 @@ class ControleInicio(ControleAbstrato):
             controle_categoria.listar()
             self.entidades = controle_categoria.entidades
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -112,9 +109,8 @@ class ControleInicio(ControleAbstrato):
         try:
             ControleRegistro(LimiteRegistro()).Listar()
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
