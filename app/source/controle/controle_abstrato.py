@@ -1,7 +1,7 @@
 from abc import ABC
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.limite.limite_abstrato import LimiteAbstrato
-from app.source.exception.rotaInexistenteException import RotaInexistenteException
+from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
 from app.source.helpers.setter import validacao_tipo
 
@@ -46,13 +46,15 @@ class ControleAbstrato(ABC):
             }
         }
 
-        try:
-            return rota[nome_funcao]
-        except KeyError:
+        rota_atual = rota.get(nome_funcao)
+
+        if rota_atual is None:
             raise RotaInexistenteException("Rota passada não existente.")
 
+        return rota_atual
+
     def selecione_rota(self, rotas: dict, opcao: str, funcao):
-        rota = rotas.get(opcao)
+        rota = rotas[opcao]
 
         if rota is None:
             self.limite.erro("Opção passada não existe, digite novamente.")
