@@ -123,7 +123,8 @@ class ControleAbstrato(ABC):
         validacao_tipo(entidade, self.classe_entidade())
 
         if self.entidades[tipo_entidade].get(entidade.identificador) is not None:
-            raise CodigoReferenciaDuplicadoException
+            message = "O código de referência usado está duplicado, por favor insira um diferente."
+            raise CodigoReferenciaDuplicadoException(message)
 
         self.entidades[tipo_entidade][entidade.identificador] = entidade
 
