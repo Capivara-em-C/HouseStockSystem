@@ -1,14 +1,14 @@
 from traceback import format_exc
 
 from app.source.controle.controle_abstrato import ControleAbstrato
-from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
-from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
-from app.source.limite.limite_categoria import LimiteCategoria
-from app.source.exception.rota_inexistente_exception import RotaInexistenteException
-from app.source.helpers.setter import validacao_tipo
-from app.source.entidade.categoria import Categoria
-from app.source.entidade.registro import Registro
 from app.source.controle.controle_registro import ControleRegistro
+from app.source.entidade.categoria import Categoria
+from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
+from app.source.exception.rota_inexistente_exception import RotaInexistenteException
+from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
+from app.source.helpers.setter import validacao_tipo
+from app.source.limite.limite_categoria import LimiteCategoria
 
 
 class ControleCategoria(ControleAbstrato):
@@ -35,9 +35,8 @@ class ControleCategoria(ControleAbstrato):
             if retorno is not None:
                 self.listar()
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -63,9 +62,10 @@ class ControleCategoria(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -100,9 +100,10 @@ class ControleCategoria(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -139,9 +140,9 @@ class ControleCategoria(ControleAbstrato):
 
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())

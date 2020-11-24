@@ -7,8 +7,8 @@ class LimiteLote(LimiteAbstrato):
         return {
             "listar": {
                 "menu": "Opções: \n" +
-                " - Criar novo produto (c) \n" +
-                " - Deletar produto (d) \n" +
+                " - Criar novo lote (c) \n" +
+                " - Deletar lote (d) \n" +
                 " - Voltar (v) \n\n: ",
             },
             "criar": {

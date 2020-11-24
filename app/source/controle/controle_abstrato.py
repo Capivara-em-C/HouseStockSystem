@@ -1,9 +1,11 @@
 from abc import ABC
+
 from app.source.entidade.entidade_abstrata import EntidadeAbstrata
-from app.source.limite.limite_abstrato import LimiteAbstrato
-from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
+from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.helpers.setter import validacao_tipo
+from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
 class ControleAbstrato(ABC):
@@ -54,7 +56,7 @@ class ControleAbstrato(ABC):
         return rota_atual
 
     def selecione_rota(self, rotas: dict, opcao: str, funcao):
-        rota = rotas[opcao]
+        rota = rotas.get(opcao)
 
         if rota is None:
             self.limite.erro("Opção passada não existe, digite novamente.")
@@ -64,19 +66,22 @@ class ControleAbstrato(ABC):
         rota()
 
     def listar(self):
-        raise Exception("Método [Listar] não permitido para este controle[%s]".format(self.__class__.__name__))
+        raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Listar"))
 
     def criar(self):
-        raise Exception("Método [Criar] não permitido para este controle[%s]".format(self.__class__.__name__))
+        raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Criar"))
 
     def atualizar(self):
-        raise Exception("Método [Atualizar] não permitido para este controle[%s]".format(self.__class__.__name__))
+        raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Atualizar"))
 
     def mostrar(self):
-        raise Exception("Método [Mostrar] não permitido para este controle[%s]".format(self.__class__.__name__))
+        raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Mostrar"))
 
     def deletar(self):
-        raise Exception("Método [Deletar] não permitido para este controle[%s]".format(self.__class__.__name__))
+        raise MetodoNaoPermitidoException()
+
+    def metodo_nao_permitido_msg(self, metodo: str) -> str:
+        return f"Método [{metodo}] não permitido para este controle[{self.__class__.__name__}]."
 
     def voltar_listagem(self) -> None:
         return None
@@ -118,7 +123,8 @@ class ControleAbstrato(ABC):
         validacao_tipo(entidade, self.classe_entidade())
 
         if self.entidades[tipo_entidade].get(entidade.identificador) is not None:
-            raise CodigoReferenciaDuplicadoException
+            message = "O código de referência usado está duplicado, por favor insira um diferente."
+            raise CodigoReferenciaDuplicadoException(message)
 
         self.entidades[tipo_entidade][entidade.identificador] = entidade
 

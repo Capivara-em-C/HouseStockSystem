@@ -20,8 +20,6 @@ class LimiteInicio(LimiteAbstrato):
         return {
             "home": {
                 "menu": "Opções: \n" +
-                " - Adicionar quantidade a um item (a) \n" +
-                " - Remover quantidade de um item (r) \n" +
                 " - Listagem de Produtos (p) \n" +
                 " - Listagem de Categorias (c) \n" +
                 " - Registros (r) \n" +

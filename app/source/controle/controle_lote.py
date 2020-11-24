@@ -2,12 +2,13 @@ from traceback import format_exc
 
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_registro import ControleRegistro
+from app.source.entidade.lote import Lote
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
-from app.source.limite.limite_lote import LimiteLote
-from app.source.entidade.lote import Lote
 from app.source.helpers.setter import validacao_tipo
+from app.source.limite.limite_lote import LimiteLote
 
 
 class ControleLote(ControleAbstrato):
@@ -32,9 +33,8 @@ class ControleLote(ControleAbstrato):
 
             self.listar()
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -57,9 +57,10 @@ class ControleLote(ControleAbstrato):
             self.adicionar_entidade(self.LOTE_ENTIDADE, self.lista_para_lote(escolhas))
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -81,9 +82,10 @@ class ControleLote(ControleAbstrato):
             self.remover_entidade(self.LOTE_ENTIDADE, self.entidades[self.LOTE_ENTIDADE].get(escolha))
             self.selecione_rota(rotas, "v", self.listar)
         except (
-            RotaInexistenteException,
-            TipoNaoCompativelException,
-            CodigoReferenciaDuplicadoException
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
