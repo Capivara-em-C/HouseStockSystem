@@ -5,7 +5,7 @@ from app.source.exception.codigo_referencia_duplicado_exception import CodigoRef
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite.limite_abstrato import LimiteAbstrato
+from app.source.limite_console.limite_abstrato import LimiteAbstrato
 
 
 class ControleAbstrato(ABC):

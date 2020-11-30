@@ -11,11 +11,13 @@ from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermiti
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite.limite_lote import LimiteLote
-from app.source.limite.limite_produto import LimiteProduto
+from app.source.limite_console.limite_produto import LimiteProduto
 
 
 class ControleProduto(ControleAbstrato):
+    def __init__(self, entidades: dict or None = None):
+        super().__init__(LimiteProduto(), entidades)
+
     @staticmethod
     def classe_limite() -> type:
         return LimiteProduto
@@ -71,7 +73,7 @@ class ControleProduto(ControleAbstrato):
                 produto.categorias = self.categorias()
 
             if isinstance(produto, ProdutoPerecivel):
-                produto.lotes = ControleLote(LimiteLote()).listar()
+                produto.lotes = ControleLote().listar()
 
             self.adicionar_entidade(self.PRODUTO_ENTIDADE, produto)
 
@@ -109,7 +111,7 @@ class ControleProduto(ControleAbstrato):
                 produto.categorias = self.categorias()
 
             if isinstance(produto, ProdutoPerecivel):
-                produto.lotes = ControleLote(LimiteLote()).listar()
+                produto.lotes = ControleLote().listar()
 
             registro_produto = self.entidades[self.PRODUTO_ENTIDADE]\
                 .get(escolhas.get("codigo_referencia"))
