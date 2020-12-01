@@ -1,4 +1,4 @@
-from app.source.limite.limite_abstrato import LimiteAbstrato
+from app.source.limite_console.limite_abstrato import LimiteAbstrato
 
 
 class LimiteCategoria(LimiteAbstrato):

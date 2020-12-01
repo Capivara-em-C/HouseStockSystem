@@ -7,12 +7,15 @@ from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermiti
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite.limite_registro import LimiteRegistro
+from app.source.limite_console.limite_registro import LimiteRegistro
 
 
 class ControleRegistro(ControleAbstrato):
     global registros
     registros = []
+
+    def __init__(self):
+        super().__init__(LimiteRegistro())
 
     @staticmethod
     def classe_limite():

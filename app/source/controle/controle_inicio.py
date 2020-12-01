@@ -6,13 +6,13 @@ from app.source.controle.controle_produto import ControleProduto
 from app.source.controle.controle_registro import ControleRegistro
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
-from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.limite.limite_inicio import LimiteInicio
-from app.source.limite.limite_produto import LimiteProduto
-from app.source.limite.limite_registro import LimiteRegistro
 
 
 class ControleInicio(ControleAbstrato):
+    def __init__(self, entidades: dict or None = None):
+        super().__init__(LimiteInicio(), entidades)
+
     @staticmethod
     def classe_limite():
         return LimiteInicio
@@ -20,10 +20,9 @@ class ControleInicio(ControleAbstrato):
     def rotas(self, nome_funcao):
         rota = {
             "home": {
-                "p": self.produto,
-                "c": self.categoria,
-                "r": self.registros,
-                "s": exit
+                "produtos": self.produto,
+                "categorias": self.categoria,
+                "registros": self.registros
             },
         }
 
@@ -35,15 +34,14 @@ class ControleInicio(ControleAbstrato):
     def home(self):
         try:
             rotas = self.rotas("home")
-            self.limite.home()
-            opcao = self.limite.selecionar_opcao("home")["menu"]
+            opcao = self.limite.home()
 
             ControleRegistro.adiciona_registro(
                 "Moveu da Home.",
-                f"Requisição enviada pelo usuário:\n{opcao}"
+                f"Requisição enviada pelo usuário:\n{opcao.get('botao')}"
             )
 
-            self.selecione_rota(rotas, opcao, self.home)
+            self.selecione_rota(rotas, opcao.get('botao'), self.home)
             self.home()
         except (
                 RotaInexistenteException,
@@ -63,8 +61,7 @@ class ControleInicio(ControleAbstrato):
 
     def produto(self):
         try:
-            controle_produto = ControleProduto(LimiteProduto())
-            controle_produto.entidades = self.entidades
+            controle_produto = ControleProduto(self.entidades)
             controle_produto.listar()
             self.entidades = controle_produto.entidades
         except (
@@ -85,8 +82,7 @@ class ControleInicio(ControleAbstrato):
 
     def categoria(self):
         try:
-            controle_categoria = ControleCategoria(LimiteCategoria())
-            controle_categoria.entidades = self.entidades
+            controle_categoria = ControleCategoria(self.entidades)
             controle_categoria.listar()
             self.entidades = controle_categoria.entidades
         except (
@@ -107,7 +103,7 @@ class ControleInicio(ControleAbstrato):
 
     def registros(self):
         try:
-            ControleRegistro(LimiteRegistro()).Listar()
+            ControleRegistro().Listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
