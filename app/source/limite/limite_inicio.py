@@ -1,28 +1,18 @@
-from app.source.limite.limite_abstrato import LimiteAbstrato
+from app.source.limite.abstract_view import AbstractView, Sg
 
 
-class LimiteInicio(LimiteAbstrato):
-    def cabecalho(self):
-        print("============================================================\n")
-        print("                           Home                             \n")
-        print("------------------------------------------------------------\n")
-
-    def roda_pe(self):
-        print("============================================================\n")
+class LimiteInicio(AbstractView):
+    def __init__(self):
+        super().__init__("Home")
 
     def home(self):
-        self.cabecalho()
-        print("                    Seja bem vindo *u*!                     \n")
-        self.roda_pe()
+        self.addRowToLayout([
+            Sg.SimpleButton(button_text="Listagem de Produtos", key="produtos", size=(18, 8)),
+            Sg.Text(size=(1, 2)),
+            Sg.SimpleButton(button_text="Listagem de Categorias", key="categorias", size=(18, 8)),
+        ])
+        self.addRowToLayout([
+            Sg.SimpleButton("Registros", key="registros", size=(41, 8))
+        ])
 
-    @staticmethod
-    def opcoes() -> dict:
-        return {
-            "home": {
-                "menu": "Opções: \n" +
-                " - Listagem de Produtos (p) \n" +
-                " - Listagem de Categorias (c) \n" +
-                " - Registros (r) \n" +
-                " - Sair (s) \n\n: ",
-            },
-        }
+        return self.window()

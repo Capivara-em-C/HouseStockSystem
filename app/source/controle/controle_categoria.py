@@ -8,10 +8,13 @@ from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermiti
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite.limite_categoria import LimiteCategoria
+from app.source.limite_console.limite_categoria import LimiteCategoria
 
 
 class ControleCategoria(ControleAbstrato):
+    def __init__(self, entidades: dict or None = None):
+        super().__init__(LimiteCategoria(), entidades)
+
     @staticmethod
     def classe_limite() -> type:
         return LimiteCategoria
