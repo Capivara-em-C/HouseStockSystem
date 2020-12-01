@@ -7,7 +7,7 @@ class LimiteInicio(AbstractView):
 
     def home(self):
         self.addRowToLayout([
-            Sg.SimpleButton(button_text="Listagem de Produtos", key="produtos", size=(18, 8), metadata="asd"),
+            Sg.SimpleButton(button_text="Listagem de Produtos", key="produtos", size=(18, 8)),
             Sg.Text(size=(1, 2)),
             Sg.SimpleButton(button_text="Listagem de Categorias", key="categorias", size=(18, 8)),
         ])
