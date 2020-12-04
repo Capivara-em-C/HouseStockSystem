@@ -1,5 +1,5 @@
-from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.entidade.lote import Lote
+from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.helpers.setter import validacao_tipo
 
 
@@ -11,7 +11,7 @@ class ProdutoPerecivel(ProdutoConsumivel):
             descricao: str = "",
             data_fabricacao: str = "",
             categorias: dict = None,
-            ultimo_valor: float = 0,
+            valor: float = 0,
             prioridade: int = 0,
             estoque_quantidade: int = 0,
             estoque_minimo: int = 0,
@@ -23,7 +23,7 @@ class ProdutoPerecivel(ProdutoConsumivel):
             descricao,
             data_fabricacao,
             categorias,
-            ultimo_valor,
+            valor,
             prioridade,
             estoque_quantidade,
             estoque_minimo

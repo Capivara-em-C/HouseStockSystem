@@ -1,7 +1,7 @@
-from app.source.limite.abstract_view import AbstractView, Sg
+from app.source.limite.limite_abstrato import LimiteAbstrato, Sg
 
 
-class LimiteInicio(AbstractView):
+class LimiteInicio(LimiteAbstrato):
     def __init__(self):
         super().__init__("Home")
 

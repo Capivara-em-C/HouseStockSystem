@@ -1,9 +1,12 @@
 # HouseStockSystem
+Version v2.0-alpha
 
 ## Requisitos para usar o sistema
 
 ### Obrigatórios
 - Python 3
+- PySimpleGUI
+- Pickle
 
 ### Opcionais
 - Radon v4.3.2

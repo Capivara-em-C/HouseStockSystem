@@ -10,7 +10,7 @@ class ProdutoConsumivel(ProdutoAbstrato):
             descricao: str = "",
             data_fabricacao: str = "",
             categorias: dict = None,
-            ultimo_valor: float = 0,
+            valor: float = 0,
             prioridade: int = 0,
             estoque_quantidade: int = 0,
             estoque_minimo: int = 0
@@ -21,7 +21,7 @@ class ProdutoConsumivel(ProdutoAbstrato):
             descricao,
             data_fabricacao,
             categorias,
-            ultimo_valor,
+            valor,
             prioridade
         )
 
@@ -46,9 +46,15 @@ class ProdutoConsumivel(ProdutoAbstrato):
         validacao_tipo(estoque_minimo, int)
         self.__estoque_minimo = estoque_minimo
 
+    def objeto_limite(self) -> list:
+        resp = super().objeto_limite()
+        resp.append(self.estoque_quantidade)
+
+        return resp
+
     def objeto_limite_detalhado(self) -> dict:
         resp = super().objeto_limite_detalhado()
-        resp["Quantidade em estoque"] = self.estoque_quantidade
-        resp["Quantidade mínima em estoque"] = self.estoque_minimo
+        resp["quantidade"] = self.estoque_quantidade
+        resp["quantidade_minima"] = self.estoque_minimo
 
         return resp

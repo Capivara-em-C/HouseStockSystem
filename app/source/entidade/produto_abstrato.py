@@ -1,7 +1,8 @@
-from app.source.entidade.entidade_abstrata import EntidadeAbstrata
-from app.source.entidade.categoria import Categoria
-from app.source.helpers.setter import validacao_tipo
 from abc import abstractmethod
+
+from app.source.entidade.categoria import Categoria
+from app.source.entidade.entidade_abstrata import EntidadeAbstrata
+from app.source.helpers.setter import validacao_tipo
 
 
 class ProdutoAbstrato(EntidadeAbstrata):
@@ -13,7 +14,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
             descricao: str = "",
             data_fabricacao: str = "",
             categorias: dict = None,
-            ultimo_valor: float = 0,
+            valor: float = 0,
             prioridade: int = 0,
     ):
         super().__init__(identificador)
@@ -25,7 +26,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
         self.descricao = descricao
         self.data_fabricacao = data_fabricacao
         self.categorias = categorias
-        self.ultimo_valor = ultimo_valor
+        self.valor = valor
         self.prioridade = prioridade
 
     @property
@@ -81,11 +82,11 @@ class ProdutoAbstrato(EntidadeAbstrata):
         return self.categorias[categoria.identificador] in self.__categorias.keys()
 
     @property
-    def ultimo_valor(self) -> float:
+    def valor(self) -> float:
         return self.__ultimo_valor
 
-    @ultimo_valor.setter
-    def ultimo_valor(self, ultimo_valor: float):
+    @valor.setter
+    def valor(self, ultimo_valor: float):
         validacao_tipo(ultimo_valor, float)
         self.__ultimo_valor = ultimo_valor
 
@@ -98,21 +99,20 @@ class ProdutoAbstrato(EntidadeAbstrata):
         validacao_tipo(prioridade, int)
         self.__prioridade = prioridade
 
-    def objeto_limite(self) -> dict:
-        return {
-            "Nº Referencia": self.identificador,
-            "Nome": self.nome,
-            "Último valor": self.ultimo_valor,
-        }
+    def objeto_limite(self) -> list:
+        return [
+            self.identificador,
+            self.nome,
+        ]
 
     def objeto_limite_detalhado(self) -> dict:
         return {
-            "Nº Referencia": self.identificador,
-            "Nome": self.nome,
-            "Descrição": self.descricao,
-            "Data de Fabricação": self.data_fabricacao,
-            "Categorias": self.categorias_limite(),
-            "Último valor pago": self.ultimo_valor,
+            "codigo": self.identificador,
+            "nome": self.nome,
+            "descricao": self.descricao,
+            "data_fabricação": self.data_fabricacao,
+            "valor": self.valor,
+            "categorias": self.categorias_limite(),
         }
 
     def categorias_limite(self) -> dict:

@@ -22,7 +22,8 @@ class ControleInicio(ControleAbstrato):
             "home": {
                 "produtos": self.produto,
                 "categorias": self.categoria,
-                "registros": self.registros
+                "registros": self.registros,
+                None: exit
             },
         }
 

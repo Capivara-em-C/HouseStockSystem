@@ -5,7 +5,7 @@ from app.source.exception.codigo_referencia_duplicado_exception import CodigoRef
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite_console.limite_abstrato import LimiteAbstrato
+from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
 class ControleAbstrato(ABC):
@@ -28,23 +28,24 @@ class ControleAbstrato(ABC):
     def rotas(self, nome_funcao) -> dict:
         rota = {
             "listar": {
-                "c": self.criar,
-                "a": self.atualizar,
-                "m": self.mostrar,
-                "d": self.deletar,
-                "v": self.voltar_listagem,
+                "criar": self.criar,
+                "editar": self.atualizar,
+                "mostrar": self.mostrar,
+                "apagar": self.deletar,
+                None: self.voltar_listagem,
+                self.limite.CANCEL: self.voltar_listagem,
             },
             "criar": {
-                "v": self.listar,
+                None: self.listar,
             },
             "atualizar": {
-                "v": self.listar,
+                None: self.listar,
             },
             "mostrar": {
-                "v": self.listar
+                None: self.listar
             },
             "deletar": {
-                "v": self.listar
+                None: self.listar
             }
         }
 
@@ -55,7 +56,7 @@ class ControleAbstrato(ABC):
 
         return rota_atual
 
-    def selecione_rota(self, rotas: dict, opcao: str, funcao):
+    def selecione_rota(self, rotas: dict, opcao: str or None, funcao):
         rota = rotas.get(opcao)
 
         if rota is None:

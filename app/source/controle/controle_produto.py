@@ -11,7 +11,7 @@ from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermiti
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite_console.limite_produto import LimiteProduto
+from app.source.limite.limite_produto import LimiteProduto
 
 
 class ControleProduto(ControleAbstrato):
@@ -31,16 +31,29 @@ class ControleProduto(ControleAbstrato):
             nome_funcao = "listar"
 
             rotas = self.rotas(nome_funcao)
-            self.limite.listar(self.exportar_entidades())
-
-            opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
+            opcao = self.limite.listar(self.exportar_entidades())
 
             ControleRegistro.adiciona_registro(
                 "Moveu da Listagem de Produtos.",
                 f"Requisição enviada pelo usuário:\n{opcao}"
             )
 
-            retorno = self.selecione_rota(rotas, opcao, self.listar)
+            if opcao is None:
+                return
+
+            botao = opcao.get('botao')
+            valores = opcao.get("valores")
+
+            if botao == 'tabela':
+                botao = self.limite.tabela_opcoes()
+
+                if botao is None:
+                    self.listar()
+                    return
+
+                botao = botao.get('botao')
+
+            retorno = self.selecione_rota(rotas, botao, self.listar)
 
             if retorno is not None:
                 self.listar()
@@ -65,21 +78,24 @@ class ControleProduto(ControleAbstrato):
             nome_funcao = "criar"
 
             rotas = self.rotas(nome_funcao)
-            self.limite.criar()
-            escolhas = self.limite.selecionar_opcao("formulario")
-            produto = self.lista_para_produto(escolhas)
+            requisicao = self.limite.criar()
 
-            if escolhas.get("tem_categorias"):
+            botao = requisicao.get('botao')
+
+            if botao is None:
+                self.selecione_rota(rotas, botao, self.listar)
+
+            produto = self.lista_para_produto(requisicao.get("valores"))
+
+            if requisicao.get("tem_categorias"):
                 produto.categorias = self.categorias()
 
             if isinstance(produto, ProdutoPerecivel):
                 produto.lotes = ControleLote().listar()
 
             self.adicionar_entidade(self.PRODUTO_ENTIDADE, produto)
-
-            ControleRegistro.adiciona_registro("Criou produto.", f"Requisição enviada pelo usuário:\n{escolhas}")
-
-            self.selecione_rota(rotas, "v", self.listar)
+            ControleRegistro.adiciona_registro("Criou produto.", f"Requisição enviada pelo usuário:\n{requisicao}")
+            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -237,25 +253,25 @@ class ControleProduto(ControleAbstrato):
 
         if lista.get("eh_perecivel"):
             return ProdutoPerecivel(
-                lista["codigo_referencia"],
-                lista["nome"],
-                lista["descricao"],
-                lista["data_fabricacao"],
+                lista.get("codigo"),
+                lista.get("nome"),
+                lista.get("descricao"),
+                lista.get("data_fabricacao"),
                 None,
-                float(lista["valor"]),
-                int(lista["prioridade"]),
-                int(lista["estoque"]),
-                int(lista["estoque_minimo"]),
+                float(lista.get("valor")),
+                int(lista.get("prioridade")),
+                int(lista.get("estoque")),
+                int(lista.get("estoque_minimo")),
             )
 
         return ProdutoConsumivel(
-            lista["codigo_referencia"],
-            lista["nome"],
-            lista["descricao"],
-            lista["data_fabricacao"],
+            lista.get("codigo"),
+            lista.get("nome"),
+            lista.get("descricao"),
+            lista.get("data_fabricacao"),
             None,
-            float(lista["valor"]),
-            int(lista["prioridade"]),
-            int(lista["estoque"]),
-            int(lista["estoque_minimo"]),
+            float(lista.get("valor")),
+            int(lista.get("prioridade")),
+            int(lista.get("estoque")),
+            int(lista.get("estoque_minimo")),
         )
