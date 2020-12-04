@@ -3,6 +3,7 @@ from traceback import format_exc
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_lote import ControleLote
 from app.source.controle.controle_registro import ControleRegistro
+from app.source.controle.controle_categoria import ControleCategoria
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.entidade.produto_perecivel import ProdutoPerecivel
@@ -12,10 +13,12 @@ from app.source.exception.rota_inexistente_exception import RotaInexistenteExcep
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite_console.limite_produto import LimiteProduto
+from app.source.persistencia.DAO_produto import DAOproduto
+from app.source.persistencia.DAO_categoria import DAOcategoria
 
 
 class ControleProduto(ControleAbstrato):
-    def __init__(self, entidades: dict or None = None):
+    def __init__(self, entidades: DAOproduto or None = None):
         super().__init__(LimiteProduto(), entidades)
 
     @staticmethod
@@ -119,7 +122,7 @@ class ControleProduto(ControleAbstrato):
             if registro_produto is not None:
                 registro_produto = registro_produto.objeto_limite_detalhado()
 
-            self.atualizar_entidade(self.PRODUTO_ENTIDADE, produto)
+            self.atualizar_entidade(escolhas.get("codigo_referencia"), produto)
 
             ControleRegistro.adiciona_registro(
                 "Atualizou produto.",
@@ -150,7 +153,7 @@ class ControleProduto(ControleAbstrato):
             nome_funcao = "mostrar"
             rotas = self.rotas(nome_funcao)
             escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
-            produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
+            produto = self.entidades.get(escolha)
 
             if produto is not None:
                 produto = produto.objeto_limite_detalhado()
@@ -184,15 +187,11 @@ class ControleProduto(ControleAbstrato):
             nome_funcao = "deletar"
             rotas = self.rotas(nome_funcao)
             escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
-            registro_produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
 
-            if registro_produto is not None:
-                registro_produto = registro_produto.objeto_limite_detalhado()
-
-            self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
+            self.remover_entidade(escolha)
             ControleRegistro.adiciona_registro(
                 "Deletou produto.",
-                f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto Deletado:\n{registro_produto}"
+                f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto Deletado:\n{escolha}"
             )
 
             self.selecione_rota(rotas, "v", self.listar)
@@ -214,13 +213,13 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def categorias(self, categorias: dict or None = None):
+    def categorias(self, categorias: DAOcategoria or None = None):
         if categorias is None:
             categorias = {}
 
         self.limite.categorias()
         escolha = self.limite.selecionar_opcao("categorias")["codigo_referencia"]
-        categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha)
+        categoria = ControleCategoria.entidades.get(escolha)
 
         if categoria is not None:
             categorias[categoria.identificador] = categoria

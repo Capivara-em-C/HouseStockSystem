@@ -9,10 +9,11 @@ from app.source.exception.rota_inexistente_exception import RotaInexistenteExcep
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite_console.limite_categoria import LimiteCategoria
-
+from app.source.persistencia.DAO_categoria import DAOcategoria
+from app.source.persistencia.DAO_produto import DAOproduto
 
 class ControleCategoria(ControleAbstrato):
-    def __init__(self, entidades: dict or None = None):
+    def __init__(self, entidades: DAOcategoria or None = None):
         super().__init__(LimiteCategoria(), entidades)
 
     @staticmethod
@@ -88,13 +89,12 @@ class ControleCategoria(ControleAbstrato):
             self.limite.criar()
             escolhas = self.limite.selecionar_opcao("atualizar")
 
-            registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE]\
-                .get(escolhas.get("codigo_referencia"))
+            registro_categoria = self.entidades.get(escolhas.get("codigo_referencia"))
 
             if registro_categoria is not None:
                 registro_categoria = registro_categoria.objeto_limite()
 
-            self.atualizar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
+            self.atualizar_entidade(registro_categoria.identificador, self.lista_para_categoria(escolhas))
 
             ControleRegistro.adiciona_registro(
                 "Atualizou categoria.",
@@ -125,7 +125,7 @@ class ControleCategoria(ControleAbstrato):
             rotas = self.rotas("deletar")
             self.limite.criar()
             escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
-            registro_categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha)
+            registro_categoria = self.entidades.get(escolha)
 
             if registro_categoria is not None:
                 registro_categoria = registro_categoria.objeto_limite()
@@ -134,7 +134,7 @@ class ControleCategoria(ControleAbstrato):
                 if entidade.categorias.get(escolha) is not None:
                     del(entidade.categorias[escolha])
 
-            self.remover_entidade(self.CATEGORIA_ENTIDADE, self.entidades[self.CATEGORIA_ENTIDADE].get(escolha))
+            self.remover_entidade(escolha)
 
             ControleRegistro.adiciona_registro(
                 "Deletou categoria.",
@@ -171,10 +171,6 @@ class ControleCategoria(ControleAbstrato):
             lista["nome"],
         )
 
-    def exportar_entidades(self) -> list:
-        resp = []
-
-        for chave in self.entidades[self.CATEGORIA_ENTIDADE]:
-            resp.append(self.entidades[self.CATEGORIA_ENTIDADE][chave].objeto_limite())
-
-        return resp
+    @staticmethod
+    def classe_entidade() -> type:
+        return Categoria
