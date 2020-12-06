@@ -26,7 +26,7 @@ class LimiteProduto(LimiteAbstrato):
             Sg.Button(button_text="Criar", key="criar")
         ])
 
-        return self.window()
+        return self.window("Listar")
 
     def tabela_opcoes(self):
         self.addRowToLayout([
@@ -40,12 +40,12 @@ class LimiteProduto(LimiteAbstrato):
     def criar(self):
         self.__formulario()
 
-        return self.window()
+        return self.window("Criar")
 
     def atualizar(self, produto: dict):
         self.__formulario(produto)
 
-        return self.window()
+        return self.window("Ataulizar")
 
     def __formulario(self, produto: dict or None = None):
         if produto is None:
@@ -91,6 +91,11 @@ class LimiteProduto(LimiteAbstrato):
         self.addRowToLayout([
             Sg.Text(text="Estoque mínimo: "),
             Sg.InputText(key="estoque_minimo", default_text=produto.get("estoque_minimo"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Cancel(button_text=self.CANCEL),
+            Sg.Button(button_text="Criar", key="criar")
         ])
 
         self.relacionamento_categoria(produto.get("categorias"))

@@ -32,7 +32,7 @@ class LimiteAbstrato:
         if tamanho is not None:
             layout = [[Sg.Column(self.layout, size=tamanho, scrollable=True, vertical_scroll_only=True)]]
 
-        window = Sg.Window(title=titulo).Layout(rows=layout)
+        window = Sg.Window(title=titulo, resizable=True).Layout(rows=layout)
         button, values = window.Read()
         window.close()
 
