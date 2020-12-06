@@ -4,8 +4,10 @@ from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
+from app.source.exception.entidade_nao_existente import EntidadeNaoExistente
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite_console.limite_abstrato import LimiteAbstrato
+from app.source.persistencia.DAO_abstrato import DAOabstrato
 
 
 class ControleAbstrato(ABC):
@@ -16,14 +18,13 @@ class ControleAbstrato(ABC):
 
     def __init__(
             self,
-            limite: LimiteAbstrato or None = None,
-            entidades: dict or None = None
+            limite: LimiteAbstrato or None = None
     ):
         if limite is None:
             limite = self.classe_limite()()
 
         self.limite = limite
-        self.entidades = entidades
+        self.entidades = DAOabstrato()
 
     def rotas(self, nome_funcao) -> dict:
         rota = {
@@ -89,67 +90,37 @@ class ControleAbstrato(ABC):
     def exportar_entidades(self) -> list:
         resp = []
 
-        for chave in self.entidades[self.PRODUTO_ENTIDADE]:
-            resp.append(self.entidades[self.PRODUTO_ENTIDADE][chave].objeto_limite())
+        for valor in self.entidades.get_all():
+            resp.append(valor.objeto_limite())
 
         return resp
 
     @property
     def entidades(self) -> dict:
-        return self.__entidades
-
-    @entidades.setter
-    def entidades(self, listas_entidades: dict or None = None):
-        if listas_entidades is None:
-            listas_entidades = {
-                self.PRODUTO_ENTIDADE: {},
-                self.CATEGORIA_ENTIDADE: {},
-                self.LOTE_ENTIDADE: {},
-            }
-
-        validacao_tipo(listas_entidades, dict)
-
-        for entidades in listas_entidades.values():
-            if entidades is not None:
-                validacao_tipo(entidades, dict)
-
-                if entidades.get(self.PRODUTO_ENTIDADE):
-                    validacao_tipo(entidades, self.classe_entidade())
-
-        self.__entidades = listas_entidades
+        return self.__entidades.get_all()
 
     def adicionar_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata):
         validacao_tipo(tipo_entidade, str)
         validacao_tipo(entidade, self.classe_entidade())
 
-        if self.entidades[tipo_entidade].get(entidade.identificador) is not None:
+        if self.entidades.get(entidade.identificador) is not None:
             message = "O código de referência usado está duplicado, por favor insira um diferente."
             raise CodigoReferenciaDuplicadoException(message)
 
-        self.entidades[tipo_entidade][entidade.identificador] = entidade
+        self.entidades.add(entidade.identificador, entidade)
 
-    def atualizar_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata):
-        validacao_tipo(tipo_entidade, str)
+    def atualizar_entidade(self,identificador , entidade: EntidadeAbstrata):
         validacao_tipo(entidade, self.classe_entidade())
 
         # @TODO make soft to only update variables that user really want
-        self.entidades[tipo_entidade][entidade.identificador] = entidade
+        if self.entidades.get(identificador) is None:
+            raise EntidadeNaoExistente()
 
-    def remover_entidade(self, tipo_entidade: str, entidade: EntidadeAbstrata or None):
-        validacao_tipo(tipo_entidade, str)
+        self.entidades.remove(identificador)
+        self.entidades.add(identificador, entidade)
 
-        if entidade is None:
-            return self
-
-        validacao_tipo(entidade, self.classe_entidade())
-        tipo = self.entidades.get(tipo_entidade)
-
-        if tipo is None or tipo.get(entidade.identificador) is None:
-            return self
-
-        del(self.entidades[tipo_entidade][entidade.identificador])
-
-        return self
+    def remover_entidade(self, identificador):
+        self.entidades.remove(identificador)
 
     @staticmethod
     def classe_entidade() -> type:
