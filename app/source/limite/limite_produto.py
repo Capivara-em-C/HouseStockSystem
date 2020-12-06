@@ -9,10 +9,10 @@ class LimiteProduto(LimiteAbstrato):
         super().__init__("Voltar")
 
     def listar(self, produtos: list or None = None):
-        validacao_multipla_tipo_ou(produtos, (list, None))
-
         if produtos is None or produtos == list():
             produtos = [["", "", "", ]]
+
+        validacao_multipla_tipo_ou(produtos, list)
 
         self.gerar_tabela(
             valores=produtos,
@@ -48,6 +48,8 @@ class LimiteProduto(LimiteAbstrato):
         return self.window()
 
     def atualizar(self, produto: dict):
+        validacao_tipo(propriedade=produto, tipo=dict)
+
         self.__formulario(produto)
 
         self.addRowToLayout([
@@ -56,6 +58,58 @@ class LimiteProduto(LimiteAbstrato):
         ])
 
         return self.window()
+
+    def mostrar(self, produto: dict):
+        validacao_tipo(propriedade=produto, tipo=dict)
+
+        self.addRowToLayout([
+            Sg.Text(text="Código de referência: "),
+            Sg.Text(text=produto.get("identificador"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Nome: "),
+            Sg.Text(text=produto.get("nome"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Descrição: "),
+            Sg.Text(text=produto.get("descricao"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Data de fabricacao: "),
+            Sg.Text(text=produto.get("data_fabricacao"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Valor: "),
+            Sg.Text(text=produto.get("valor"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Prioridade: "),
+            Sg.Text(text=produto.get("prioridade"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Estoque: "),
+            Sg.Text(text=produto.get("estoque_quantidade"))
+        ])
+
+        self.addRowToLayout([
+            Sg.Text(text="Estoque mínimo: "),
+            Sg.Text(text=produto.get("estoque_minimo"))
+        ])
+
+        self.relacionamento_categoria(produto.get("categorias"))
+        self.relacionamento_lote(produto.get("lotes"))
+
+        self.addRowToLayout([
+            Sg.Cancel(button_text=self.CANCEL),
+        ])
+
+        self.window()
 
     def __formulario(self, produto: dict or None = None):
         if produto is None:

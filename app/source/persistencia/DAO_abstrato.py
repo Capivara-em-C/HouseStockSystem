@@ -6,10 +6,11 @@ import pickle
 
 class DAOAbstrato(ABC):
     @abstractmethod
-    def __init__(self, datasource: str = ""):
-        self.__local_arquivo = "app/database/" + datasource + ".pkl"
+    def __init__(self, local_arquivo: str = ""):
+        self.__local_arquivo = "app/database/" + local_arquivo + ".pkl"
         self.__cache = {}
         self.__cache_lista = []
+
         try:
             self.__load()
         except FileNotFoundError:

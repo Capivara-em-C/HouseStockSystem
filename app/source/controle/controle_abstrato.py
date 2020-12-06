@@ -12,18 +12,11 @@ from app.source.limite.limite_abstrato import LimiteAbstrato
 
 class ControleAbstrato(ABC):
     # Lista de Entidades que salvas neste controle
-    PRODUTO_ENTIDADE = "produtos"
     CATEGORIA_ENTIDADE = "categoria"
     LOTE_ENTIDADE = "lote"
 
-    def __init__(
-            self,
-            limite: LimiteAbstrato or None = None
-    ):
-        if limite is None:
-            limite = self.classe_limite()()
-
-        self.limite = limite
+    def __init__(self):
+        self.limite = self.classe_limite()()
 
     def rotas(self, nome_funcao) -> dict:
         rota = {
@@ -32,23 +25,18 @@ class ControleAbstrato(ABC):
                 "editar": self.atualizar,
                 "mostrar": self.mostrar,
                 "apagar": self.deletar,
-                None: self.voltar_listagem,
                 self.limite.CANCEL: self.voltar_listagem,
             },
             "criar": {
-                None: self.listar,
                 self.limite.CANCEL: self.listar,
             },
             "atualizar": {
-                None: self.listar,
                 self.limite.CANCEL: self.listar,
             },
             "mostrar": {
-                None: self.listar,
                 self.limite.CANCEL: self.listar,
             },
             "deletar": {
-                None: self.listar,
                 self.limite.CANCEL: self.listar,
             }
         }
@@ -75,7 +63,7 @@ class ControleAbstrato(ABC):
     def criar(self):
         raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Criar"))
 
-    def atualizar(self):
+    def atualizar(self, identificador: str):
         raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Atualizar"))
 
     def mostrar(self):

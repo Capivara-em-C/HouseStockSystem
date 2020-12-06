@@ -15,7 +15,7 @@ class ControleRegistro(ControleAbstrato):
     registros = []
 
     def __init__(self):
-        super().__init__(LimiteRegistro())
+        super().__init__()
 
     @staticmethod
     def classe_limite():

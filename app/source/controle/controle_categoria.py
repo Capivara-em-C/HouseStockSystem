@@ -13,8 +13,9 @@ from app.source.persistencia.DAO_categoria import DAOCategoria
 
 
 class ControleCategoria(ControleAbstrato):
-    def __init__(self, entidades: DAOCategoria or None = None):
-        super().__init__(LimiteCategoria(), entidades)
+    def __init__(self):
+        super().__init__()
+        self.entity_manager = DAOCategoria()
 
     @staticmethod
     def classe_limite() -> type:
@@ -83,7 +84,7 @@ class ControleCategoria(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def atualizar(self):
+    def atualizar(self, identificador: str):
         try:
             rotas = self.rotas("atualizar")
             self.limite.criar()

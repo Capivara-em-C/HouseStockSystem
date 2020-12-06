@@ -72,7 +72,6 @@ class LimiteAbstrato:
             tooltip=tooltip,
             col_widths=tamanho_coluna,
             size=(500, 50),
-            display_row_numbers=True,
             num_rows=20,
             select_mode=Sg.SELECT_MODE_BROWSE
         )])

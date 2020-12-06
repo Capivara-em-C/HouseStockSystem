@@ -98,9 +98,7 @@ class ControleProduto(ControleAbstrato):
         try:
             requisicao = self.limite.criar()
 
-            botao = requisicao.get('botao')
-
-            if botao is None:
+            if requisicao is None:
                 self.listar()
                 return
 
@@ -115,19 +113,24 @@ class ControleProduto(ControleAbstrato):
             self.adicionar_entidade(produto)
 
             self.listar()
-        except (
-                RotaInexistenteException,
-                MetodoNaoPermitidoException,
-                TipoNaoCompativelException,
-                CodigoReferenciaDuplicadoException,
-        ) as err:
-            self.limite.erro(err)
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except ValueError as err:
             self.limite.erro(
                 "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
                 "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
             )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except (
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+            self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
@@ -144,9 +147,7 @@ class ControleProduto(ControleAbstrato):
 
             requisicao = self.limite.atualizar(registro_produto.objeto_limite_detalhado())
 
-            botao = requisicao.get('botao')
-
-            if botao is None or botao == self.limite.CANCEL:
+            if requisicao is None:
                 self.listar()
                 return
 
@@ -167,19 +168,24 @@ class ControleProduto(ControleAbstrato):
             self.atualizar_entidade(produto)
 
             self.listar()
-        except (
-                RotaInexistenteException,
-                MetodoNaoPermitidoException,
-                TipoNaoCompativelException,
-                CodigoReferenciaDuplicadoException,
-        ) as err:
-            self.limite.erro(err)
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except ValueError as err:
             self.limite.erro(
                 "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
                 "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
             )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except (
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+            self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
@@ -201,7 +207,7 @@ class ControleProduto(ControleAbstrato):
 
             ControleRegistro.adiciona_registro(
                 "Visualizou detalhes de um produto.",
-                f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto visto:\n{produto}"
+                f"Requisição enviada pelo usuário:\n{produto}\n\nProduto visto:\n{produto}"
             )
 
             self.listar()
@@ -234,19 +240,24 @@ class ControleProduto(ControleAbstrato):
             )
 
             self.listar()
-        except (
-                RotaInexistenteException,
-                MetodoNaoPermitidoException,
-                TipoNaoCompativelException,
-                CodigoReferenciaDuplicadoException,
-        ) as err:
-            self.limite.erro(err)
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except ValueError as err:
             self.limite.erro(
                 "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
                 "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
             )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except (
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+            self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
@@ -274,9 +285,9 @@ class ControleProduto(ControleAbstrato):
         validacao_tipo(lista, dict)
 
         if produto is None:
-            produto = ProdutoConsumivel(lista.get("codigo"))
+            produto = ProdutoConsumivel(lista.get("identificador"))
             if lista.get("eh_perecivel"):
-                produto = ProdutoPerecivel(lista.get("codigo"))
+                produto = ProdutoPerecivel(lista.get("identificador"))
 
         validacao_tipo(propriedade=produto, tipo=ProdutoAbstrato)
 

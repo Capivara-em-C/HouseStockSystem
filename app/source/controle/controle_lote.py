@@ -13,7 +13,7 @@ from app.source.limite_console.limite_lote import LimiteLote
 
 class ControleLote(ControleAbstrato):
     def __init__(self):
-        super().__init__(LimiteLote())
+        super().__init__()
 
     @staticmethod
     def classe_limite() -> type:

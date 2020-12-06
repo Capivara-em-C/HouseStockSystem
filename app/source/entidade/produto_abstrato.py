@@ -110,7 +110,7 @@ class ProdutoAbstrato(EntidadeAbstrata):
             "identificador": self.identificador,
             "nome": self.nome,
             "descricao": self.descricao,
-            "data_fabricação": self.data_fabricacao,
+            "data_fabricacao": self.data_fabricacao,
             "valor": self.valor,
             "prioridade": self.prioridade,
             "categorias": self.categorias_limite(),

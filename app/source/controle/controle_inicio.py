@@ -10,6 +10,9 @@ from app.source.limite.limite_inicio import LimiteInicio
 
 
 class ControleInicio(ControleAbstrato):
+    def __init__(self):
+        super().__init__()
+
     @staticmethod
     def classe_limite():
         return LimiteInicio
