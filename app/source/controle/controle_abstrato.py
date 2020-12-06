@@ -108,16 +108,20 @@ class ControleAbstrato(ABC):
 
         self.entity_manager.add(entidade.identificador, entidade)
 
-    def atualizar_entidade(self, entidade: EntidadeAbstrata):
+    def atualizar_entidade(self, entidade: EntidadeAbstrata, identificador: str or None = None):
         validacao_tipo(entidade, self.classe_entidade())
-        identificador = entidade.identificador
+
+        if identificador is None:
+            identificador = entidade.identificador
+
+        validacao_tipo(identificador, str)
 
         # @TODO make soft to only update variables that user really want
         if self.entity_manager.get(identificador) is None:
             raise EntidadeNaoExistente()
 
         self.entity_manager.remove(identificador)
-        self.entity_manager.add(identificador, entidade)
+        self.entity_manager.add(entidade.identificador, entidade)
 
         return self
 

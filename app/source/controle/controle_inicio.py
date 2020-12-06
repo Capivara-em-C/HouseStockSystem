@@ -62,8 +62,7 @@ class ControleInicio(ControleAbstrato):
 
     def produto(self):
         try:
-            controle_produto = ControleProduto()
-            controle_produto.listar()
+            ControleProduto().listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -82,9 +81,7 @@ class ControleInicio(ControleAbstrato):
 
     def categoria(self):
         try:
-            controle_categoria = ControleCategoria(self.entidades)
-            controle_categoria.listar()
-            self.entidades = controle_categoria.entidades
+            ControleCategoria().listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,

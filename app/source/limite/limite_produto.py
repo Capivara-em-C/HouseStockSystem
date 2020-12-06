@@ -1,4 +1,4 @@
-from app.source.helpers.setter import validacao_tipo, validacao_multipla_tipo_ou
+from app.source.helpers.setter import validacao_tipo
 from app.source.limite.limite_abstrato import LimiteAbstrato, Sg
 
 
@@ -9,10 +9,10 @@ class LimiteProduto(LimiteAbstrato):
         super().__init__("Voltar")
 
     def listar(self, produtos: list or None = None):
-        if produtos is None or produtos == list():
+        if produtos is None or not produtos:
             produtos = [["", "", "", ]]
 
-        validacao_multipla_tipo_ou(produtos, list)
+        validacao_tipo(produtos, list)
 
         self.gerar_tabela(
             valores=produtos,

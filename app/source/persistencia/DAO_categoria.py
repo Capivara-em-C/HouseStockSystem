@@ -7,13 +7,3 @@ class DAOCategoria(DAOAbstrato):
 
     def __init__(self):
         super().__init__('categorias.pkl')
-
-    def add(self, categoria: Categoria):
-        validacao_tipo(categoria, Categoria)
-        super().add(categoria.identificador, categoria)
-
-    def get(self, identificador):
-        return super().get(identificador)
-
-    def remove(self, identificador):
-        return super().remove(identificador)

@@ -42,7 +42,7 @@ class ControleProduto(ControleAbstrato):
                 f"Requisição enviada pelo usuário:\n{requisicao}"
             )
 
-            if requisicao is None:
+            if requisicao.get("botao") is None:
                 return
 
             botao = requisicao.get('botao')
@@ -98,7 +98,7 @@ class ControleProduto(ControleAbstrato):
         try:
             requisicao = self.limite.criar()
 
-            if requisicao is None:
+            if requisicao.get("botao") is None:
                 self.listar()
                 return
 
@@ -147,7 +147,7 @@ class ControleProduto(ControleAbstrato):
 
             requisicao = self.limite.atualizar(registro_produto.objeto_limite_detalhado())
 
-            if requisicao is None:
+            if requisicao.get("botao") is None:
                 self.listar()
                 return
 
@@ -165,7 +165,7 @@ class ControleProduto(ControleAbstrato):
             if registro_produto is not None:
                 registro_produto = registro_produto.objeto_limite_detalhado()
 
-            self.atualizar_entidade(produto)
+            self.atualizar_entidade(produto, identificador)
 
             self.listar()
         except ValueError as err:
@@ -236,7 +236,7 @@ class ControleProduto(ControleAbstrato):
 
             ControleRegistro.adiciona_registro(
                 "Deletou produto.",
-                f"Requisição enviada pelo usuário:\n{identificador}\n\nProduto Deletado:\n{produto}"
+                f"Requisição enviada pelo usuário:\n{identificador}\n\nProduto Deletado:\n{produto.objeto_limite_detalhado}"
             )
 
             self.listar()

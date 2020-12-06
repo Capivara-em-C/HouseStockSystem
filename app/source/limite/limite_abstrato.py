@@ -39,7 +39,7 @@ class LimiteAbstrato:
         self.layout = []
 
         if button == self.CANCEL:
-            return None
+            return {"botao": None}
 
         return {"botao": button, "valores": values}
 
@@ -73,7 +73,8 @@ class LimiteAbstrato:
             col_widths=tamanho_coluna,
             size=(500, 50),
             num_rows=20,
-            select_mode=Sg.SELECT_MODE_BROWSE
+            select_mode=Sg.SELECT_MODE_BROWSE,
+            pad=(3, 3)
         )])
 
     def erro(self, message: str = ""):
