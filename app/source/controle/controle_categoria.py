@@ -9,11 +9,11 @@ from app.source.exception.rota_inexistente_exception import RotaInexistenteExcep
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite_console.limite_categoria import LimiteCategoria
-from app.source.persistencia.DAO_categoria import DAOcategoria
-from app.source.persistencia.DAO_produto import DAOproduto
+from app.source.persistencia.DAO_categoria import DAOCategoria
+
 
 class ControleCategoria(ControleAbstrato):
-    def __init__(self, entidades: DAOcategoria or None = None):
+    def __init__(self, entidades: DAOCategoria or None = None):
         super().__init__(LimiteCategoria(), entidades)
 
     @staticmethod

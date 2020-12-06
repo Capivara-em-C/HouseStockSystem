@@ -40,10 +40,20 @@ class LimiteProduto(LimiteAbstrato):
     def criar(self):
         self.__formulario()
 
+        self.addRowToLayout([
+            Sg.Cancel(button_text=self.CANCEL),
+            Sg.Button(button_text="Criar", key="criar")
+        ])
+
         return self.window()
 
     def atualizar(self, produto: dict):
         self.__formulario(produto)
+
+        self.addRowToLayout([
+            Sg.Cancel(button_text=self.CANCEL),
+            Sg.Button(button_text="Atualizar", key="atualizar")
+        ])
 
         return self.window()
 
@@ -55,7 +65,7 @@ class LimiteProduto(LimiteAbstrato):
 
         self.addRowToLayout([
             Sg.Text(text="Código de referência: "),
-            Sg.InputText(key="codigo", default_text=produto.get("identificador"))
+            Sg.InputText(key="identificador", default_text=produto.get("identificador"))
         ])
 
         self.addRowToLayout([
@@ -85,7 +95,7 @@ class LimiteProduto(LimiteAbstrato):
 
         self.addRowToLayout([
             Sg.Text(text="Estoque: "),
-            Sg.InputText(key="estoque", default_text=produto.get("estoque"))
+            Sg.InputText(key="estoque_quantidade", default_text=produto.get("estoque_quantidade"))
         ])
 
         self.addRowToLayout([
@@ -97,7 +107,7 @@ class LimiteProduto(LimiteAbstrato):
         self.relacionamento_lote(produto.get("lotes"))
 
     def relacionamento_categoria(self, categorias: list or None = None):
-        if categorias is None:
+        if categorias is None or (isinstance(categorias, list) and len(categorias) < 1):
             categorias = [
                 ["", "", ],
             ]
@@ -113,7 +123,7 @@ class LimiteProduto(LimiteAbstrato):
         )
 
     def relacionamento_lote(self, lotes: list or None = None):
-        if lotes is None:
+        if lotes is None or (isinstance(lotes, list) and len(lotes) < 1):
             lotes = [
                 ["", "", ],
             ]

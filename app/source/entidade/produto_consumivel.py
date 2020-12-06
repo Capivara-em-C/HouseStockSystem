@@ -10,7 +10,7 @@ class ProdutoConsumivel(ProdutoAbstrato):
             descricao: str = "",
             data_fabricacao: str = "",
             categorias: dict = None,
-            valor: float = 0,
+            valor: float = 0.0,
             prioridade: int = 0,
             estoque_quantidade: int = 0,
             estoque_minimo: int = 0
@@ -54,7 +54,7 @@ class ProdutoConsumivel(ProdutoAbstrato):
 
     def objeto_limite_detalhado(self) -> dict:
         resp = super().objeto_limite_detalhado()
-        resp["quantidade"] = self.estoque_quantidade
-        resp["quantidade_minima"] = self.estoque_minimo
+        resp["estoque_quantidade"] = self.estoque_quantidade
+        resp["estoque_minimo"] = self.estoque_minimo
 
         return resp

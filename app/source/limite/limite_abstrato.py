@@ -19,8 +19,8 @@ class LimiteAbstrato:
 
     def add_default_buttons(self):
         self.addRowToLayout([
-            Sg.Submit(button_text=self.SUBMIT, key=self.CANCEL),
-            Sg.Cancel(button_text=self.CANCEL, key=self.SUBMIT)
+            Sg.Submit(button_text=self.SUBMIT),
+            Sg.Cancel(button_text=self.CANCEL)
         ])
 
     def window(self, titulo: str = "", tamanho: tuple or None = None):

@@ -107,19 +107,19 @@ class ProdutoAbstrato(EntidadeAbstrata):
 
     def objeto_limite_detalhado(self) -> dict:
         return {
-            "codigo": self.identificador,
+            "identificador": self.identificador,
             "nome": self.nome,
             "descricao": self.descricao,
             "data_fabricação": self.data_fabricacao,
             "valor": self.valor,
+            "prioridade": self.prioridade,
             "categorias": self.categorias_limite(),
         }
 
-    def categorias_limite(self) -> dict:
-        resp = {}
+    def categorias_limite(self) -> list:
+        resp = []
 
-        for chave in self.categorias:
-            categoria = self.categorias[chave]
-            resp[chave] = categoria.objeto_limite()
+        for categoria in self.categorias.values():
+            resp.append(categoria.objeto_limite())
 
         return resp

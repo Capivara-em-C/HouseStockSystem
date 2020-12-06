@@ -13,14 +13,14 @@ from app.source.exception.rota_inexistente_exception import RotaInexistenteExcep
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite.limite_produto import LimiteProduto
-from app.source.persistencia.DAO_produto import DAOproduto
-from app.source.persistencia.DAO_categoria import DAOcategoria
+from app.source.persistencia.DAO_produto import DAOProduto
+from app.source.persistencia.DAO_categoria import DAOCategoria
 
 
 class ControleProduto(ControleAbstrato):
     def __init__(self):
         super().__init__()
-        self.entity_manager = DAOproduto()
+        self.entity_manager = DAOProduto()
 
     @staticmethod
     def classe_limite() -> type:
@@ -35,24 +35,30 @@ class ControleProduto(ControleAbstrato):
             nome_funcao = "listar"
 
             rotas = self.rotas(nome_funcao)
-            opcao = self.limite.listar(self.exportar_entidades())
+            requisicao = self.limite.listar(self.exportar_entidades())
 
             ControleRegistro.adiciona_registro(
                 "Moveu da Listagem de Produtos.",
-                f"Requisição enviada pelo usuário:\n{opcao}"
+                f"Requisição enviada pelo usuário:\n{requisicao}"
             )
 
-            if opcao is None:
+            if requisicao is None:
                 return
 
-            botao = opcao.get('botao')
-            valores = opcao.get("valores")
+            botao = requisicao.get('botao')
+            valores = requisicao.get("valores")
             identificador = ""
 
-            if valores and isinstance(valores, dict):
+            if valores and isinstance(valores, dict) and botao == 'tabela':
                 identificador = valores.get("tabela")
-                if identificador and isinstance(identificador, list):
+                if identificador and isinstance(identificador, list) and len(identificador) > 0:
+                    if len(self.entity_manager.get_all()) < 1:
+                        self.listar()
+                        return
                     identificador = self.entity_manager.get_all()[identificador[0]].identificador
+                else:
+                    self.listar()
+                    return
 
             if botao == 'tabela':
                 botao = self.limite.tabela_opcoes()
@@ -87,16 +93,16 @@ class ControleProduto(ControleAbstrato):
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
     def criar(self):
-        try:
-            nome_funcao = "criar"
+        requisicao = None
 
-            rotas = self.rotas(nome_funcao)
+        try:
             requisicao = self.limite.criar()
 
             botao = requisicao.get('botao')
 
             if botao is None:
-                self.selecione_rota(rotas, botao, self.listar)
+                self.listar()
+                return
 
             produto = self.lista_para_produto(requisicao.get("valores"))
 
@@ -107,7 +113,7 @@ class ControleProduto(ControleAbstrato):
                 produto.lotes = ControleLote().listar()
 
             self.adicionar_entidade(produto)
-            ControleRegistro.adiciona_registro("Criou produto.", f"Requisição enviada pelo usuário:\n{requisicao}")
+
             self.listar()
         except (
                 RotaInexistenteException,
@@ -126,36 +132,41 @@ class ControleProduto(ControleAbstrato):
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        finally:
+            ControleRegistro.adiciona_registro("Criou produto.", f"Requisição enviada pelo usuário:\n{requisicao}")
 
     def atualizar(self, identificador: str):
+        registro_produto = None
+        requisicao = None
+        
         try:
-            nome_funcao = "atualizar"
+            registro_produto = self.entity_manager.get(identificador)
 
-            rotas = self.rotas(nome_funcao)
-            self.limite.atualizar()
-            escolhas = self.limite.selecionar_opcao("formulario")
-            produto = self.lista_para_produto(escolhas)
+            requisicao = self.limite.atualizar(registro_produto.objeto_limite_detalhado())
 
-            if escolhas.get("tem_categorias"):
+            botao = requisicao.get('botao')
+
+            if botao is None or botao == self.limite.CANCEL:
+                self.listar()
+                return
+
+            produto = self.lista_para_produto(
+                requisicao.get("valores"),
+                registro_produto
+            )
+
+            if requisicao.get("tem_categorias"):
                 produto.categorias = self.categorias()
 
             if isinstance(produto, ProdutoPerecivel):
                 produto.lotes = ControleLote().listar()
 
-            registro_produto = self.entidades[self.PRODUTO_ENTIDADE]\
-                .get(escolhas.get("codigo_referencia"))
-
             if registro_produto is not None:
                 registro_produto = registro_produto.objeto_limite_detalhado()
 
-            self.atualizar_entidade(escolhas.get("codigo_referencia"), produto)
+            self.atualizar_entidade(produto)
 
-            ControleRegistro.adiciona_registro(
-                "Atualizou produto.",
-                f"Requisição enviada pelo usuário:\n{escolhas}\n\nProduto Antes da alteração:\n{registro_produto}"
-            )
-
-            self.selecione_rota(rotas, "v", self.listar)
+            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -173,13 +184,15 @@ class ControleProduto(ControleAbstrato):
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        finally:
+            ControleRegistro.adiciona_registro(
+                "Atualizou produto.",
+                f"Requisição enviada pelo usuário:\n{requisicao}\n\nProduto Antes da alteração:\n{registro_produto}"
+            )
 
     def mostrar(self, identificador: str):
         try:
-            nome_funcao = "mostrar"
-            rotas = self.rotas(nome_funcao)
-            escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
-            produto = self.entity_manager.get(escolha)
+            produto = self.entity_manager.get(identificador)
 
             if produto is not None:
                 produto = produto.objeto_limite_detalhado()
@@ -191,18 +204,20 @@ class ControleProduto(ControleAbstrato):
                 f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto visto:\n{produto}"
             )
 
-            self.selecione_rota(rotas, "v", self.listar)
-        except (
-                RotaInexistenteException,
-                MetodoNaoPermitidoException,
-        ) as err:
-            self.limite.erro(err)
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+            self.listar()
         except ValueError as err:
             self.limite.erro(
                 "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
                 "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
             )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+
+            self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
@@ -237,7 +252,7 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def categorias(self, categorias: DAOcategoria or None = None):
+    def categorias(self, categorias: DAOCategoria or None = None):
         if categorias is None:
             categorias = {}
 
@@ -255,30 +270,32 @@ class ControleProduto(ControleAbstrato):
         return None
 
     @staticmethod
-    def lista_para_produto(lista: dict) -> ProdutoAbstrato:
+    def lista_para_produto(lista: dict, produto: ProdutoAbstrato or None = None) -> ProdutoAbstrato:
         validacao_tipo(lista, dict)
 
-        if lista.get("eh_perecivel"):
-            return ProdutoPerecivel(
-                lista.get("codigo"),
-                lista.get("nome"),
-                lista.get("descricao"),
-                lista.get("data_fabricacao"),
-                None,
-                float(lista.get("valor")),
-                int(lista.get("prioridade")),
-                int(lista.get("estoque")),
-                int(lista.get("estoque_minimo")),
-            )
+        if produto is None:
+            produto = ProdutoConsumivel(lista.get("codigo"))
+            if lista.get("eh_perecivel"):
+                produto = ProdutoPerecivel(lista.get("codigo"))
 
-        return ProdutoConsumivel(
-            lista.get("codigo"),
-            lista.get("nome"),
-            lista.get("descricao"),
-            lista.get("data_fabricacao"),
-            None,
-            float(lista.get("valor")),
-            int(lista.get("prioridade")),
-            int(lista.get("estoque")),
-            int(lista.get("estoque_minimo")),
-        )
+        validacao_tipo(propriedade=produto, tipo=ProdutoAbstrato)
+
+        identificador = lista.get("identificador")
+        nome = lista.get("nome")
+        descricao = lista.get("descricao")
+        data_fabricacao = lista.get("data_fabricacao")
+        valor = lista.get("valor")
+        prioridade = lista.get("prioridade")
+        estoque_quantidade = lista.get("estoque_quantidade")
+        estoque_minimo = lista.get("estoque_minimo")
+
+        produto.identificador = identificador if identificador is not None else produto.identificador
+        produto.nome = nome if nome is not None else produto.nome
+        produto.descricao = descricao if descricao is not None else produto.descricao
+        produto.data_fabricacao = data_fabricacao if data_fabricacao is not None else produto.data_fabricacao
+        produto.valor = float(valor if valor is not None else produto.valor)
+        produto.prioridade = int(prioridade if prioridade is not None else produto.prioridade)
+        produto.estoque_quantidade = int(estoque_quantidade if estoque_quantidade is not None else produto.estoque_quantidade)
+        produto.estoque_minimo = int(estoque_minimo if estoque_minimo is not None else produto.estoque_minimo)
+
+        return produto

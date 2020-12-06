@@ -6,7 +6,7 @@ from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermiti
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.entidade_nao_existente import EntidadeNaoExistente
 from app.source.helpers.setter import validacao_tipo
-from app.source.persistencia.DAO_abstrato import DAOabstrato
+from app.source.persistencia.DAO_abstrato import DAOAbstrato
 from app.source.limite.limite_abstrato import LimiteAbstrato
 
 
@@ -107,21 +107,22 @@ class ControleAbstrato(ABC):
         return self.__entity_manager
 
     @entity_manager.setter
-    def entity_manager(self, entity_manager: DAOabstrato):
-        validacao_tipo(entity_manager, DAOabstrato)
+    def entity_manager(self, entity_manager: DAOAbstrato):
+        validacao_tipo(entity_manager, DAOAbstrato)
         self.__entity_manager = entity_manager
 
     def adicionar_entidade(self, entidade: EntidadeAbstrata):
         validacao_tipo(entidade, self.classe_entidade())
 
-        if self.entity_manager.getOneOrNone(entidade.identificador) is not None:
+        if self.entity_manager.get_one_or_none(entidade.identificador) is not None:
             message = "O código de referência usado está duplicado, por favor insira um diferente."
             raise CodigoReferenciaDuplicadoException(message)
 
         self.entity_manager.add(entidade.identificador, entidade)
 
-    def atualizar_entidade(self, identificador: str, entidade: EntidadeAbstrata):
+    def atualizar_entidade(self, entidade: EntidadeAbstrata):
         validacao_tipo(entidade, self.classe_entidade())
+        identificador = entidade.identificador
 
         # @TODO make soft to only update variables that user really want
         if self.entity_manager.get(identificador) is None:
