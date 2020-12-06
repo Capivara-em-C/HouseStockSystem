@@ -3,6 +3,7 @@ from traceback import format_exc
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_lote import ControleLote
 from app.source.controle.controle_registro import ControleRegistro
+from app.source.controle.controle_categoria import ControleCategoria
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.entidade.produto_perecivel import ProdutoPerecivel
@@ -12,11 +13,14 @@ from app.source.exception.rota_inexistente_exception import RotaInexistenteExcep
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite.limite_produto import LimiteProduto
+from app.source.persistencia.DAO_produto import DAOproduto
+from app.source.persistencia.DAO_categoria import DAOcategoria
 
 
 class ControleProduto(ControleAbstrato):
-    def __init__(self, entidades: dict or None = None):
-        super().__init__(LimiteProduto(), entidades)
+    def __init__(self):
+        super().__init__()
+        self.entity_manager = DAOproduto()
 
     @staticmethod
     def classe_limite() -> type:
@@ -43,6 +47,12 @@ class ControleProduto(ControleAbstrato):
 
             botao = opcao.get('botao')
             valores = opcao.get("valores")
+            identificador = ""
+
+            if valores and isinstance(valores, dict):
+                identificador = valores.get("tabela")
+                if identificador and isinstance(identificador, list):
+                    identificador = self.entity_manager.get_all()[identificador[0]].identificador
 
             if botao == 'tabela':
                 botao = self.limite.tabela_opcoes()
@@ -53,7 +63,10 @@ class ControleProduto(ControleAbstrato):
 
                 botao = botao.get('botao')
 
-            retorno = self.selecione_rota(rotas, botao, self.listar)
+            if botao in ("editar", "mostrar", "apagar"):
+                retorno = self.selecione_rota(rotas, botao, self.listar)(identificador)
+            else:
+                retorno = self.selecione_rota(rotas, botao, self.listar)()
 
             if retorno is not None:
                 self.listar()
@@ -93,7 +106,7 @@ class ControleProduto(ControleAbstrato):
             if isinstance(produto, ProdutoPerecivel):
                 produto.lotes = ControleLote().listar()
 
-            self.adicionar_entidade(self.PRODUTO_ENTIDADE, produto)
+            self.adicionar_entidade(produto)
             ControleRegistro.adiciona_registro("Criou produto.", f"Requisição enviada pelo usuário:\n{requisicao}")
             self.listar()
         except (
@@ -114,7 +127,7 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def atualizar(self):
+    def atualizar(self, identificador: str):
         try:
             nome_funcao = "atualizar"
 
@@ -135,7 +148,7 @@ class ControleProduto(ControleAbstrato):
             if registro_produto is not None:
                 registro_produto = registro_produto.objeto_limite_detalhado()
 
-            self.atualizar_entidade(self.PRODUTO_ENTIDADE, produto)
+            self.atualizar_entidade(escolhas.get("codigo_referencia"), produto)
 
             ControleRegistro.adiciona_registro(
                 "Atualizou produto.",
@@ -161,12 +174,12 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def mostrar(self):
+    def mostrar(self, identificador: str):
         try:
             nome_funcao = "mostrar"
             rotas = self.rotas(nome_funcao)
             escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
-            produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
+            produto = self.entity_manager.get(escolha)
 
             if produto is not None:
                 produto = produto.objeto_limite_detalhado()
@@ -195,23 +208,17 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def deletar(self):
+    def deletar(self, identificador: str):
         try:
-            nome_funcao = "deletar"
-            rotas = self.rotas(nome_funcao)
-            escolha = self.limite.selecionar_opcao(nome_funcao)["codigo_referencia"]
-            registro_produto = self.entidades[self.PRODUTO_ENTIDADE].get(escolha)
+            produto = self.entity_manager.get(identificador)
+            self.entity_manager.remove(identificador)
 
-            if registro_produto is not None:
-                registro_produto = registro_produto.objeto_limite_detalhado()
-
-            self.remover_entidade(self.PRODUTO_ENTIDADE, self.entidades[self.PRODUTO_ENTIDADE].get(escolha))
             ControleRegistro.adiciona_registro(
                 "Deletou produto.",
-                f"Requisição enviada pelo usuário:\n{escolha}\n\nProduto Deletado:\n{registro_produto}"
+                f"Requisição enviada pelo usuário:\n{identificador}\n\nProduto Deletado:\n{produto}"
             )
 
-            self.selecione_rota(rotas, "v", self.listar)
+            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -230,13 +237,13 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def categorias(self, categorias: dict or None = None):
+    def categorias(self, categorias: DAOcategoria or None = None):
         if categorias is None:
             categorias = {}
 
         self.limite.categorias()
         escolha = self.limite.selecionar_opcao("categorias")["codigo_referencia"]
-        categoria = self.entidades[self.CATEGORIA_ENTIDADE].get(escolha)
+        categoria = ControleCategoria.entity_manager.get(escolha)
 
         if categoria is not None:
             categorias[categoria.identificador] = categoria

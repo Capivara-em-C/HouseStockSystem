@@ -1,5 +1,3 @@
-
-
 class CodigoReferenciaDuplicadoException(Exception):
     def __init__(self, message: str = None):
         if message is None:
