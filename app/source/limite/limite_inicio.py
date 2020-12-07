@@ -1,7 +1,7 @@
-from app.source.limite.abstract_view import AbstractView, Sg
+from app.source.limite.limite_abstrato import LimiteAbstrato, Sg
 
 
-class LimiteInicio(AbstractView):
+class LimiteInicio(LimiteAbstrato):
     def __init__(self):
         super().__init__("Home")
 
@@ -11,6 +11,7 @@ class LimiteInicio(AbstractView):
             Sg.Text(size=(1, 2)),
             Sg.SimpleButton(button_text="Listagem de Categorias", key="categorias", size=(18, 8)),
         ])
+
         self.addRowToLayout([
             Sg.SimpleButton("Registros", key="registros", size=(41, 8))
         ])

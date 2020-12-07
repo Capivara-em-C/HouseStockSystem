@@ -3,38 +3,67 @@ from traceback import format_exc
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_registro import ControleRegistro
 from app.source.entidade.categoria import Categoria
+from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite_console.limite_categoria import LimiteCategoria
-from app.source.persistencia.DAO_categoria import DAOcategoria
-from app.source.persistencia.DAO_produto import DAOproduto
+from app.source.limite.limite_categoria import LimiteCategoria
+from app.source.persistencia.DAO_categoria import DAOCategoria
+from app.source.persistencia.DAO_produto import DAOProduto
+
 
 class ControleCategoria(ControleAbstrato):
-    def __init__(self, entidades: DAOcategoria or None = None):
-        super().__init__(LimiteCategoria(), entidades)
+    def __init__(self):
+        super().__init__()
+        self.entity_manager = DAOCategoria()
 
     @staticmethod
     def classe_limite() -> type:
         return LimiteCategoria
 
-    def listar(self):
+    def listar(self) -> None:
         try:
             nome_funcao = "listar"
 
             rotas = self.rotas(nome_funcao)
-            self.limite.listar(self.exportar_entidades())
-
-            opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
+            requisicao = self.limite.listar(self.exportar_entidades())
 
             ControleRegistro.adiciona_registro(
                 "Moveu da Listagem de Categorias.",
-                f"Requisição enviada pelo usuário:\n{opcao}"
+                f"Requisição enviada pelo usuário:\n{requisicao}"
             )
 
-            retorno = self.selecione_rota(rotas, opcao, self.listar)
+            if requisicao.get("botao") is None:
+                return None
+
+            botao = requisicao.get('botao')
+            valores = requisicao.get("valores")
+            identificador = ""
+
+            if valores and isinstance(valores, dict) and botao == 'tabela':
+                identificador = valores.get("tabela")
+                if identificador and isinstance(identificador, list) and len(identificador) > 0:
+                    if len(self.entity_manager.get_all()) < 1:
+                        self.listar()
+                        return
+                    identificador = self.entity_manager.get_all()[identificador[0]].identificador
+                else:
+                    self.listar()
+                    return
+
+            if botao == 'tabela':
+                botao = self.limite.tabela_opcoes().get('botao')
+
+                if botao is None:
+                    self.listar()
+                    return
+
+            if botao in ("editar", "mostrar", "apagar"):
+                retorno = self.selecione_rota(rotas, botao, self.listar)(identificador)
+            else:
+                retorno = self.selecione_rota(rotas, botao, self.listar)()
 
             if retorno is not None:
                 self.listar()
@@ -55,93 +84,115 @@ class ControleCategoria(ControleAbstrato):
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
     def criar(self):
+        requisicao = None
+
         try:
-            rotas = self.rotas("criar")
-            self.limite.criar()
-            escolhas = self.limite.selecionar_opcao("criar")
+            requisicao = self.limite.criar()
 
-            self.adicionar_entidade(self.CATEGORIA_ENTIDADE, self.lista_para_categoria(escolhas))
+            if requisicao.get("botao") is None:
+                self.listar()
+                return
 
-            ControleRegistro.adiciona_registro("Criou Categoria.", f"Requisição enviada pelo usuário:\n{escolhas}")
+            produto = self.lista_para_categoria(requisicao.get("valores"))
 
-            self.selecione_rota(rotas, "v", self.listar)
-        except (
-                RotaInexistenteException,
-                MetodoNaoPermitidoException,
-                TipoNaoCompativelException,
-                CodigoReferenciaDuplicadoException,
-        ) as err:
-            self.limite.erro(err)
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+            self.adicionar_entidade(produto)
+
+            self.listar()
         except ValueError as err:
             self.limite.erro(
                 "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
                 "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
             )
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except (
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+            self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         except Exception as err:
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        finally:
+            ControleRegistro.adiciona_registro("Criou produto.", f"Requisição enviada pelo usuário:\n{requisicao}")
 
-    def atualizar(self):
+    def atualizar(self, identificador: str):
+        registro_produto = None
+        requisicao = None
+
         try:
-            rotas = self.rotas("atualizar")
-            self.limite.criar()
-            escolhas = self.limite.selecionar_opcao("atualizar")
+            registro_categoria = self.entity_manager.get(identificador)
 
-            registro_categoria = self.entidades.get(escolhas.get("codigo_referencia"))
+            requisicao = self.limite.atualizar(
+                registro_categoria.objeto_limite_detalhado()
+            )
 
-            if registro_categoria is not None:
-                registro_categoria = registro_categoria.objeto_limite()
+            if requisicao.get("botao") is None:
+                self.listar()
+                return
 
-            self.atualizar_entidade(registro_categoria.identificador, self.lista_para_categoria(escolhas))
+            categoria = self.lista_para_categoria(
+                requisicao.get("valores"),
+                registro_categoria
+            )
 
+            self.atualizar_entidade(categoria, identificador)
+
+            self.listar()
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except (
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        finally:
             ControleRegistro.adiciona_registro(
                 "Atualizou categoria.",
-                f"Requisição enviada pelo usuário:\n{escolhas}\n\nCategoria Antes da alteração:\n{registro_categoria}"
+                f"Requisição enviada pelo usuário:\n{requisicao}\n" +
+                "\nCategoria Antes da alteração:\n{registro_categoria}"
             )
 
-            self.selecione_rota(rotas, "v", self.listar)
-        except (
-                RotaInexistenteException,
-                MetodoNaoPermitidoException,
-                TipoNaoCompativelException,
-                CodigoReferenciaDuplicadoException,
-        ) as err:
-            self.limite.erro(err)
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-        except ValueError as err:
-            self.limite.erro(
-                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
-                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
-            )
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-        except Exception as err:
-            self.limite.erro("Erro inesperado ocorreu!")
-            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-
-    def deletar(self):
+    def deletar(self, identificador: str):
         try:
-            rotas = self.rotas("deletar")
-            self.limite.criar()
-            escolha = self.limite.selecionar_opcao("deletar")["codigo_referencia"]
-            registro_categoria = self.entidades.get(escolha)
+            categoria = self.entity_manager.get(identificador)
+            self.entity_manager.remove(identificador, False)
 
-            if registro_categoria is not None:
-                registro_categoria = registro_categoria.objeto_limite()
-
-            for entidade in self.entidades["produtos"].values():
-                if entidade.categorias.get(escolha) is not None:
-                    del(entidade.categorias[escolha])
-
-            self.remover_entidade(escolha)
+            produtos = DAOProduto().get_all()
+            for produto in produtos:
+                if produto.categorias.get(identificador):
+                    del(produto.categorias[identificador])
+                    DAOProduto().remove(produto.identificador)
+                    DAOProduto().add(produto.identificador, produto)
 
             ControleRegistro.adiciona_registro(
                 "Deletou categoria.",
-                f"Requisição enviada pelo usuário:\n{escolha}\n\nCategoria deletada:\n{registro_categoria}"
+                f"Requisição enviada pelo usuário:\n{categoria.objeto_limite_detalhado()}\n" +
+                "\nCategoria deletada:\n{registro_categoria}"
             )
 
-            self.selecione_rota(rotas, "v", self.listar)
+            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -163,14 +214,27 @@ class ControleCategoria(ControleAbstrato):
         return None
 
     @staticmethod
-    def lista_para_categoria(lista: dict) -> Categoria:
+    def lista_para_categoria(lista: dict, categoria: Categoria or None = None) -> Categoria:
         validacao_tipo(lista, dict)
 
-        return Categoria(
-            lista["codigo_referencia"],
-            lista["nome"],
-        )
+        if categoria is None:
+            categoria = Categoria(lista.get("identificador"))
+
+        categoria.identificador = lista.get("identificador") if lista.get("identificador") else categoria.identificador
+        categoria.nome = lista.get("nome") if lista.get("nome") else categoria.nome
+
+        return categoria
 
     @staticmethod
     def classe_entidade() -> type:
         return Categoria
+
+    def atualizar_entidade(self, entidade: Categoria, identificador: str or None = None):
+        super().atualizar_entidade(entidade=entidade, identificador=identificador)
+
+        produtos = DAOProduto().get_all()
+        for produto in produtos:
+            if produto.categorias.get(identificador):
+                produto.categorias[identificador] = entidade
+                DAOProduto().remove(produto.identificador)
+                DAOProduto().add(produto.identificador, produto)

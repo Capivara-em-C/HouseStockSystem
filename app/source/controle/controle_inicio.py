@@ -10,8 +10,8 @@ from app.source.limite.limite_inicio import LimiteInicio
 
 
 class ControleInicio(ControleAbstrato):
-    def __init__(self, entidades: dict or None = None):
-        super().__init__(LimiteInicio(), entidades)
+    def __init__(self):
+        super().__init__()
 
     @staticmethod
     def classe_limite():
@@ -22,7 +22,8 @@ class ControleInicio(ControleAbstrato):
             "home": {
                 "produtos": self.produto,
                 "categorias": self.categoria,
-                "registros": self.registros
+                "registros": self.registros,
+                None: exit
             },
         }
 
@@ -41,7 +42,7 @@ class ControleInicio(ControleAbstrato):
                 f"Requisição enviada pelo usuário:\n{opcao.get('botao')}"
             )
 
-            self.selecione_rota(rotas, opcao.get('botao'), self.home)
+            self.selecione_rota(rotas, opcao.get('botao'), self.home)()
             self.home()
         except (
                 RotaInexistenteException,
@@ -61,9 +62,7 @@ class ControleInicio(ControleAbstrato):
 
     def produto(self):
         try:
-            controle_produto = ControleProduto(self.entidades)
-            controle_produto.listar()
-            self.entidades = controle_produto.entidades
+            ControleProduto().listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -82,9 +81,7 @@ class ControleInicio(ControleAbstrato):
 
     def categoria(self):
         try:
-            controle_categoria = ControleCategoria(self.entidades)
-            controle_categoria.listar()
-            self.entidades = controle_categoria.entidades
+            ControleCategoria().listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,

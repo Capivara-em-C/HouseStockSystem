@@ -3,17 +3,22 @@ from traceback import format_exc
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_registro import ControleRegistro
 from app.source.entidade.lote import Lote
+from app.source.entidade.produto_perecivel import ProdutoPerecivel
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.entidade_nao_existente import EntidadeNaoExistente
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
 from app.source.helpers.setter import validacao_tipo
-from app.source.limite_console.limite_lote import LimiteLote
+from app.source.limite.limite_lote import LimiteLote
+from app.source.persistencia.DAO_produto import DAOProduto
 
 
 class ControleLote(ControleAbstrato):
-    def __init__(self):
-        super().__init__(LimiteLote())
+    def __init__(self, produto: ProdutoPerecivel):
+        super().__init__()
+        self.__produto = produto
+        self.entity_manager = DAOProduto()
 
     @staticmethod
     def classe_limite() -> type:
@@ -27,14 +32,38 @@ class ControleLote(ControleAbstrato):
         try:
             nome_funcao = "listar"
             rotas = self.rotas(nome_funcao)
-            self.limite.listar(self.exportar_entidades())
-            opcao = self.limite.selecionar_opcao(nome_funcao)["menu"]
-            retorno = self.selecione_rota(rotas, opcao, self.listar)
+            requisicao = self.limite.listar(self.exportar_entidades())
+            botao = requisicao.get('botao')
 
-            if retorno is None:
-                return self.entidades[self.LOTE_ENTIDADE]
+            if botao is None:
+                return
 
-            self.listar()
+            valores = requisicao.get("valores")
+            identificador = ""
+
+            if valores and isinstance(valores, dict) and botao == 'tabela':
+                identificador = valores.get("tabela")
+                if identificador and isinstance(identificador, list) and len(identificador) > 0:
+                    lotes = list(self.__produto.lotes.values())
+                    identificador = lotes[identificador[0]].identificador
+                else:
+                    self.listar()
+                    return
+
+            if botao == 'tabela':
+                botao = self.limite.tabela_opcoes().get('botao')
+
+                if botao is None:
+                    self.listar()
+                    return
+
+            if botao in ("editar", "apagar"):
+                retorno = self.selecione_rota(rotas, botao, self.listar)(identificador)
+            else:
+                retorno = self.selecione_rota(rotas, botao, self.listar)()
+
+            if retorno is not None:
+                self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -53,12 +82,24 @@ class ControleLote(ControleAbstrato):
 
     def criar(self):
         try:
-            nome_funcao = "criar"
-            rotas = self.rotas(nome_funcao)
-            self.limite.criar()
-            escolhas = self.limite.selecionar_opcao(nome_funcao)
-            self.adicionar_entidade(self.LOTE_ENTIDADE, self.lista_para_lote(escolhas))
-            self.selecione_rota(rotas, "v", self.listar)
+            requisicao = self.limite.criar()
+
+            botao = requisicao.get("botao")
+            valores = requisicao.get("valores")
+
+            if botao is None:
+                self.listar()
+                return
+
+            if self.__produto.lotes.get(valores.get("data_validade")):
+                raise CodigoReferenciaDuplicadoException()
+
+            self.__produto.add_lote(Lote(
+                valores.get("data_validade"),
+                int(valores.get("quantidade")),
+            ))
+
+            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -77,13 +118,53 @@ class ControleLote(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def deletar(self):
+    def atualizar(self, identificador: str):
         try:
-            nome_funcao = "deletar"
-            rotas = self.rotas(nome_funcao)
-            escolha = self.limite.selecionar_opcao(nome_funcao)["data_validade"]
-            self.remover_entidade(self.LOTE_ENTIDADE, self.entidades[self.LOTE_ENTIDADE].get(escolha))
-            self.selecione_rota(rotas, "v", self.listar)
+            lote = self.__produto.lotes.get(identificador)
+
+            if not lote:
+                raise EntidadeNaoExistente()
+
+            requisicao = self.limite.atualizar(lote.objeto_limite_detalhado())
+
+            botao = requisicao.get("botao")
+            valores = requisicao.get("valores")
+
+            if botao is None:
+                self.listar()
+                return
+
+            lote.data_validade = valores.get("data_validade")
+            lote.quantidade = int(valores.get("quantidade"))
+
+            self.__produto.remover_lote(identificador)
+            self.__produto.add_lote(lote)
+
+            self.listar()
+        except (
+                RotaInexistenteException,
+                MetodoNaoPermitidoException,
+                TipoNaoCompativelException,
+                CodigoReferenciaDuplicadoException,
+        ) as err:
+            self.limite.erro(err)
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except ValueError as err:
+            self.limite.erro(
+                "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
+                "(Exemplo: No cadastro de um produto você passou uma letra para o valor)."
+            )
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+        except Exception as err:
+            self.limite.erro("Erro inesperado ocorreu!")
+            ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
+
+    def deletar(self, identificador: str):
+        try:
+            if self.__produto.lotes.get(identificador):
+                self.__produto.remover_lote(identificador)
+
+            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -105,8 +186,8 @@ class ControleLote(ControleAbstrato):
     def exportar_entidades(self) -> list:
         resp = []
 
-        for chave in self.entidades[self.LOTE_ENTIDADE]:
-            resp.append(self.entidades[self.LOTE_ENTIDADE][chave].objeto_limite())
+        for lote in self.__produto.lotes.values():
+            resp.append(lote.objeto_limite())
 
         return resp
 

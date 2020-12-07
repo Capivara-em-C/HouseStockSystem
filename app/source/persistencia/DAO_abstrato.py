@@ -1,40 +1,51 @@
 from abc import ABC, abstractmethod
 from app.source.exception.entidade_nao_existente import EntidadeNaoExistente
+from app.source.entidade.entidade_abstrata import EntidadeAbstrata
 import pickle
 
-class DAOabstrato(ABC):
 
+class DAOAbstrato(ABC):
     @abstractmethod
-    def __init__(self, datasource=''):
-        self.__datasource = datasource
+    def __init__(self, local_arquivo: str = ""):
+        self.__local_arquivo = "app/database/" + local_arquivo + ".pkl"
         self.__cache = {}
+        self.__cache_lista = []
+
         try:
             self.__load()
         except FileNotFoundError:
             self.__dump()
 
     def __dump(self):
-        pickle.dump(self.__cache, open(self.__datasource, 'wb'))
+        pickle.dump(self.__cache, open(self.__local_arquivo, 'wb'))
+        self.__cache_lista = list(self.__cache.values())
 
     def __load(self):
-        self.__cache = pickle.load(open(self.__datasource, 'rb'))
+        self.__cache = pickle.load(open(self.__local_arquivo, 'rb'))
+        self.__cache_lista = list(self.__cache.values())
 
-    def add(self, key, obj):
-        self.__cache[key] = obj
+    def add(self, chave: str, obj: EntidadeAbstrata):
+        self.__cache[chave] = obj
         self.__dump()
 
-    def get(self, key):
+    def get(self, chave: str):
         try:
-            return self.__cache[key]
+            return self.__cache[chave]
         except KeyError:
-            raise EntidadeNaoExistente
+            raise EntidadeNaoExistente()
 
-    def remove(self, key):
+    def get_one_or_none(self, chave: str):
+        return self.__cache.get(chave)
+
+    def remove(self, chave: str, eh_atualizacao: bool):
         try:
-            self.__cache.pop(key)
+            self.__cache.pop(chave)
             self.__dump()
         except KeyError:
-            raise EntidadeNaoExistente
+            if eh_atualizacao:
+                pass
+            else:
+                raise EntidadeNaoExistente
 
-    def get_all(self):
-        return self.__cache.values()
+    def get_all(self) -> list:
+        return self.__cache_lista

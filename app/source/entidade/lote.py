@@ -29,8 +29,14 @@ class Lote(EntidadeAbstrata):
         validacao_tipo(data_validade, str)
         self.identificador = data_validade
 
-    def objeto_limite(self) -> dict:
+    def objeto_limite(self) -> list:
+        return [
+            self.data_validade,
+            self.quantidade,
+        ]
+
+    def objeto_limite_detalhado(self) -> dict:
         return {
-            "Data de validade": self.data_validade,
-            "Quantidade": self.quantidade,
+            "data_validade": self.data_validade,
+            "quantidade": self.quantidade,
         }

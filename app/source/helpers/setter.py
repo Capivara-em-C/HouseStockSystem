@@ -14,14 +14,8 @@ def validacao_multipla_tipo_e(propriedade, tipos: list):
         validacao_tipo(propriedade, tipo)
 
 
-def validacao_multipla_tipo_ou(propriedade, tipos: list):
-    validacao_tipo(tipos, list)
-    validacao = False
-
-    for tipo in tipos:
-        validacao |= (tipo is None and propriedade is None) or isinstance(propriedade, tipo)
-
-    if not validacao:
+def validacao_multipla_tipo_ou(propriedade, tipos: tuple):
+    if not isinstance(propriedade, tipos):
         raise TipoNaoCompativelException(
             "Propriedade passada[" + str(propriedade) + "] " +
             " não é um dos tipos[ " + str(tipos) + "]."

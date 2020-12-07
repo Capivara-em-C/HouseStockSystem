@@ -3,7 +3,7 @@ from app.source.helpers.setter import validacao_tipo
 
 
 class Categoria(EntidadeAbstrata):
-    def __init__(self, identificador: int, nome: str):
+    def __init__(self, identificador: str, nome: str = ""):
         super().__init__(identificador)
         self.nome = nome
 
@@ -16,8 +16,14 @@ class Categoria(EntidadeAbstrata):
         validacao_tipo(nome, str)
         self.__nome = nome
 
-    def objeto_limite(self) -> dict:
+    def objeto_limite(self) -> list:
+        return [
+            self.identificador,
+            self.nome,
+        ]
+
+    def objeto_limite_detalhado(self) -> dict:
         return {
-            "Nº Referencia": self.identificador,
-            "Nome": self.nome,
+            "identificador": self.identificador,
+            "nome": self.nome,
         }

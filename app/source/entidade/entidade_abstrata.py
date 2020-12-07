@@ -1,4 +1,5 @@
 from abc import ABC
+
 from app.source.helpers.setter import validacao_tipo
 
 
@@ -11,7 +12,7 @@ class EntidadeAbstrata(ABC):
 
     def objeto_limite_detalhado(self) -> dict:
         return {
-            "Código de Referência": self.identificador
+            "codigo": self.identificador
         }
 
     @property
