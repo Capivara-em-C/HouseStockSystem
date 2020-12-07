@@ -116,13 +116,13 @@ class ControleAbstrato(ABC):
 
         validacao_tipo(identificador, str)
 
-        if self.entity_manager.get(identificador) is None:
+        if self.entity_manager.get_one_or_none(identificador) is None:
             raise EntidadeNaoExistente()
 
         if entidade.identificador != identificador and self.entity_manager.get_one_or_none(entidade.identificador):
             raise CodigoReferenciaDuplicadoException()
 
-        self.entity_manager.remove(identificador)
+        self.entity_manager.remove(identificador, True)
         self.entity_manager.add(entidade.identificador, entidade)
 
         return self
