@@ -37,12 +37,15 @@ class DAOAbstrato(ABC):
     def get_one_or_none(self, chave: str):
         return self.__cache.get(chave)
 
-    def remove(self, chave: str):
+    def remove(self, chave: str, eh_atualizacao: bool):
         try:
             self.__cache.pop(chave)
             self.__dump()
         except KeyError:
-            raise EntidadeNaoExistente
+            if eh_atualizacao:
+                pass
+            else:
+                raise EntidadeNaoExistente
 
     def get_all(self):
         return self.__cache_lista

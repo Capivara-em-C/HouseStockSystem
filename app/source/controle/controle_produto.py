@@ -134,6 +134,7 @@ class ControleProduto(ControleAbstrato):
     def atualizar(self, identificador: str):
         registro_produto = None
         requisicao = None
+
         
         try:
             registro_produto = self.entity_manager.get(identificador)
@@ -150,6 +151,7 @@ class ControleProduto(ControleAbstrato):
                 registro_produto
             )
 
+            mudou_id = requisicao["valores"]["identificador"] != identificador
             self.atualizar_entidade(produto, identificador)
 
             if botao == "categorias":
@@ -158,7 +160,7 @@ class ControleProduto(ControleAbstrato):
             if botao == "lotes":
                 ControleLote(produto=produto).listar()
 
-            self.atualizar_entidade(produto, identificador)
+            self.atualizar_entidade(produto, produto.identificador)
 
             self.listar()
         except ValueError as err:
@@ -226,7 +228,7 @@ class ControleProduto(ControleAbstrato):
     def deletar(self, identificador: str):
         try:
             produto = self.entity_manager.get(identificador)
-            self.entity_manager.remove(identificador)
+            self.entity_manager.remove(identificador, False)
 
             ControleRegistro.adiciona_registro(
                 "Deletou produto.",

@@ -175,7 +175,7 @@ class ControleCategoria(ControleAbstrato):
     def deletar(self, identificador: str):
         try:
             categoria = self.entity_manager.get(identificador)
-            self.entity_manager.remove(identificador)
+            self.entity_manager.remove(identificador, False)
 
             ControleRegistro.adiciona_registro(
                 "Deletou categoria.",
