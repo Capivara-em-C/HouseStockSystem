@@ -74,7 +74,6 @@ class LimiteAbstrato:
             size=(500, 50),
             num_rows=20,
             select_mode=Sg.SELECT_MODE_BROWSE,
-            pad=(3, 3)
         )])
 
     def erro(self, message: str = ""):

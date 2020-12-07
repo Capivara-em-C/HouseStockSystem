@@ -91,7 +91,7 @@ class ControleAbstrato(ABC):
         return self.__entity_manager.get_all()
 
     @property
-    def entity_manager(self):
+    def entity_manager(self) -> DAOAbstrato:
         return self.__entity_manager
 
     @entity_manager.setter

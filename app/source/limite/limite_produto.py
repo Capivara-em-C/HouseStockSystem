@@ -28,6 +28,30 @@ class LimiteProduto(LimiteAbstrato):
 
         return self.window()
 
+    def categorias(self, categorias: list or None = None):
+        if categorias is None or not categorias:
+            categorias = [["", "", "", ]]
+
+        validacao_tipo(categorias, list)
+
+        self.addRowToLayout([Sg.Table(
+            values=categorias,
+            justification='center',
+            key="tabela",
+            headings=["Nº Referencia", "Nome"],
+            bind_return_key=True,
+            tooltip="Clique duas vezes em uma das linhas para selecionar uma ação.",
+            col_widths=[20, 20],
+            size=(500, 50),
+            num_rows=20,
+        )])
+
+        self.addRowToLayout([
+            Sg.Cancel(button_text=self.CANCEL),
+        ])
+
+        return self.window()
+
     def tabela_opcoes(self):
         self.addRowToLayout([
             Sg.SimpleButton(button_text="Mostrar", key="mostrar", size=(10, 8)),
