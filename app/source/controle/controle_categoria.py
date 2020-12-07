@@ -3,6 +3,7 @@ from traceback import format_exc
 from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_registro import ControleRegistro
 from app.source.entidade.categoria import Categoria
+from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
@@ -10,6 +11,7 @@ from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativel
 from app.source.helpers.setter import validacao_tipo
 from app.source.limite.limite_categoria import LimiteCategoria
 from app.source.persistencia.DAO_categoria import DAOCategoria
+from app.source.persistencia.DAO_produto import DAOProduto
 
 
 class ControleCategoria(ControleAbstrato):
@@ -177,6 +179,13 @@ class ControleCategoria(ControleAbstrato):
             categoria = self.entity_manager.get(identificador)
             self.entity_manager.remove(identificador)
 
+            produtos = DAOProduto().get_all()
+            for produto in produtos:
+                if produto.categorias.get(identificador):
+                    del(produto.categorias[identificador])
+                    DAOProduto().remove(produto.identificador)
+                    DAOProduto().add(produto.identificador, produto)
+
             ControleRegistro.adiciona_registro(
                 "Deletou categoria.",
                 f"Requisição enviada pelo usuário:\n{categoria.objeto_limite_detalhado()}\n" +
@@ -219,3 +228,13 @@ class ControleCategoria(ControleAbstrato):
     @staticmethod
     def classe_entidade() -> type:
         return Categoria
+
+    def atualizar_entidade(self, entidade: Categoria, identificador: str or None = None):
+        super().atualizar_entidade(entidade=entidade, identificador=identificador)
+
+        produtos = DAOProduto().get_all()
+        for produto in produtos:
+            if produto.categorias.get(identificador):
+                produto.categorias[identificador] = entidade
+                DAOProduto().remove(produto.identificador)
+                DAOProduto().add(produto.identificador, produto)
