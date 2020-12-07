@@ -47,5 +47,5 @@ class DAOAbstrato(ABC):
             else:
                 raise EntidadeNaoExistente
 
-    def get_all(self):
+    def get_all(self) -> list:
         return self.__cache_lista

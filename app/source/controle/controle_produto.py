@@ -4,6 +4,7 @@ from app.source.controle.controle_abstrato import ControleAbstrato
 from app.source.controle.controle_lote import ControleLote
 from app.source.controle.controle_registro import ControleRegistro
 from app.source.controle.controle_categoria import ControleCategoria
+from app.source.entidade.categoria import Categoria
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
 from app.source.entidade.produto_perecivel import ProdutoPerecivel
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
@@ -259,19 +260,25 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
 
-    def categorias(self, categorias: DAOCategoria or None = None):
-        if categorias is None:
-            categorias = {}
+    def categorias(self):
+        categorias = ControleCategoria().exportar_entidades()
+        requisicao = self.limite.categorias(categorias)
 
-        self.limite.categorias()
-        escolha = self.limite.selecionar_opcao("categorias")["codigo_referencia"]
-        categoria = ControleCategoria.entity_manager.get(escolha)
+        botao = requisicao.get("botao")
 
-        if categoria is not None:
-            categorias[categoria.identificador] = categoria
-            categorias = self.categorias(categorias)
+        if botao is None:
+            self.listar()
+            return
 
-        return categorias
+        values = requisicao.get("valores").get("tabela")
+        resp = {}
+
+        for value in values:
+            categoria = Categoria(categorias[value][0], categorias[value][1])
+
+            resp[categoria.identificador] = categoria
+
+        return resp
 
     def voltar_listagem(self) -> None:
         return None
