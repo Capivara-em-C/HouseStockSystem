@@ -66,10 +66,10 @@ class ControleAbstrato(ABC):
     def atualizar(self, identificador: str):
         raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Atualizar"))
 
-    def mostrar(self):
+    def mostrar(self, identificador: str):
         raise MetodoNaoPermitidoException(self.metodo_nao_permitido_msg("Mostrar"))
 
-    def deletar(self):
+    def deletar(self, identificador: str):
         raise MetodoNaoPermitidoException()
 
     def metodo_nao_permitido_msg(self, metodo: str) -> str:
@@ -116,9 +116,11 @@ class ControleAbstrato(ABC):
 
         validacao_tipo(identificador, str)
 
-        # @TODO make soft to only update variables that user really want
         if self.entity_manager.get(identificador) is None:
             raise EntidadeNaoExistente()
+
+        if entidade.identificador != identificador and self.entity_manager.get_one_or_none(entidade.identificador):
+            raise CodigoReferenciaDuplicadoException()
 
         self.entity_manager.remove(identificador)
         self.entity_manager.add(entidade.identificador, entidade)

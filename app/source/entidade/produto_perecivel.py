@@ -11,7 +11,7 @@ class ProdutoPerecivel(ProdutoConsumivel):
             descricao: str = "",
             data_fabricacao: str = "",
             categorias: dict = None,
-            valor: float = 0,
+            valor: float = 0.0,
             prioridade: int = 0,
             estoque_quantidade: int = 0,
             estoque_minimo: int = 0,
@@ -49,9 +49,9 @@ class ProdutoPerecivel(ProdutoConsumivel):
         self.__lotes[lote.identificador] = lote
         self.atualizar_estoque()
 
-    def remover_lote(self, lote: Lote):
-        validacao_tipo(lote, Lote)
-        del(self.__lotes[lote.identificador])
+    def remover_lote(self, identificador: str):
+        validacao_tipo(identificador, str)
+        del(self.__lotes[identificador])
         self.atualizar_estoque()
 
     def atualizar_estoque(self):
@@ -72,12 +72,11 @@ class ProdutoPerecivel(ProdutoConsumivel):
         return resp
 
     @staticmethod
-    def lotes_para_limite(lotes: dict):
+    def lotes_para_limite(lotes: dict) -> list:
         validacao_tipo(lotes, dict)
 
-        resp = {}
-        for chave in lotes:
-            lote = lotes[chave]
-            resp[chave] = lote.objeto_limite()
+        resp = []
+        for lote in lotes.values():
+            resp.append(lote.objeto_limite())
 
         return resp

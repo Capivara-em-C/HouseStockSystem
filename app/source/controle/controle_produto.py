@@ -5,9 +5,9 @@ from app.source.controle.controle_lote import ControleLote
 from app.source.controle.controle_registro import ControleRegistro
 from app.source.controle.controle_categoria import ControleCategoria
 from app.source.entidade.produto_abstrato import ProdutoAbstrato
-from app.source.entidade.produto_consumivel import ProdutoConsumivel
 from app.source.entidade.produto_perecivel import ProdutoPerecivel
 from app.source.exception.codigo_referencia_duplicado_exception import CodigoReferenciaDuplicadoException
+from app.source.exception.entidade_nao_existente import EntidadeNaoExistente
 from app.source.exception.metodo_nao_permitido_exception import MetodoNaoPermitidoException
 from app.source.exception.rota_inexistente_exception import RotaInexistenteException
 from app.source.exception.tipo_nao_compativel_exception import TipoNaoCompativelException
@@ -42,10 +42,11 @@ class ControleProduto(ControleAbstrato):
                 f"Requisição enviada pelo usuário:\n{requisicao}"
             )
 
-            if requisicao.get("botao") is None:
+            botao = requisicao.get('botao')
+
+            if botao is None:
                 return
 
-            botao = requisicao.get('botao')
             valores = requisicao.get("valores")
             identificador = ""
 
@@ -61,13 +62,11 @@ class ControleProduto(ControleAbstrato):
                     return
 
             if botao == 'tabela':
-                botao = self.limite.tabela_opcoes()
+                botao = self.limite.tabela_opcoes().get('botao')
 
                 if botao is None:
                     self.listar()
                     return
-
-                botao = botao.get('botao')
 
             if botao in ("editar", "mostrar", "apagar"):
                 retorno = self.selecione_rota(rotas, botao, self.listar)(identificador)
@@ -79,6 +78,7 @@ class ControleProduto(ControleAbstrato):
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
+                EntidadeNaoExistente,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -104,12 +104,6 @@ class ControleProduto(ControleAbstrato):
 
             produto = self.lista_para_produto(requisicao.get("valores"))
 
-            if requisicao.get("tem_categorias"):
-                produto.categorias = self.categorias()
-
-            if isinstance(produto, ProdutoPerecivel):
-                produto.lotes = ControleLote().listar()
-
             self.adicionar_entidade(produto)
 
             self.listar()
@@ -125,7 +119,6 @@ class ControleProduto(ControleAbstrato):
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -146,8 +139,9 @@ class ControleProduto(ControleAbstrato):
             registro_produto = self.entity_manager.get(identificador)
 
             requisicao = self.limite.atualizar(registro_produto.objeto_limite_detalhado())
+            botao = requisicao.get("botao")
 
-            if requisicao.get("botao") is None:
+            if botao is None:
                 self.listar()
                 return
 
@@ -156,14 +150,13 @@ class ControleProduto(ControleAbstrato):
                 registro_produto
             )
 
-            if requisicao.get("tem_categorias"):
+            self.atualizar_entidade(produto, identificador)
+
+            if botao == "categorias":
                 produto.categorias = self.categorias()
 
-            if isinstance(produto, ProdutoPerecivel):
-                produto.lotes = ControleLote().listar()
-
-            if registro_produto is not None:
-                registro_produto = registro_produto.objeto_limite_detalhado()
+            if botao == "lotes":
+                ControleLote(produto=produto).listar()
 
             self.atualizar_entidade(produto, identificador)
 
@@ -177,10 +170,10 @@ class ControleProduto(ControleAbstrato):
         except (
                 TipoNaoCompativelException,
                 CodigoReferenciaDuplicadoException,
+                EntidadeNaoExistente,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
@@ -191,6 +184,9 @@ class ControleProduto(ControleAbstrato):
             self.limite.erro("Erro inesperado ocorreu!")
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
         finally:
+            if registro_produto:
+                registro_produto = registro_produto.objeto_limite_detalhado()
+
             ControleRegistro.adiciona_registro(
                 "Atualizou produto.",
                 f"Requisição enviada pelo usuário:\n{requisicao}\n\nProduto Antes da alteração:\n{registro_produto}"
@@ -198,16 +194,13 @@ class ControleProduto(ControleAbstrato):
 
     def mostrar(self, identificador: str):
         try:
-            produto = self.entity_manager.get(identificador)
-
-            if produto is not None:
-                produto = produto.objeto_limite_detalhado()
+            produto = self.entity_manager.get(identificador).objeto_limite_detalhado()
 
             self.limite.mostrar(produto)
 
             ControleRegistro.adiciona_registro(
                 "Visualizou detalhes de um produto.",
-                f"Requisição enviada pelo usuário:\n{produto}\n\nProduto visto:\n{produto}"
+                f"Requisição enviada pelo usuário:\n{identificador}\n\nProduto visto:\n{produto}"
             )
 
             self.listar()
@@ -222,6 +215,7 @@ class ControleProduto(ControleAbstrato):
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
+                EntidadeNaoExistente,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -236,7 +230,7 @@ class ControleProduto(ControleAbstrato):
 
             ControleRegistro.adiciona_registro(
                 "Deletou produto.",
-                f"Requisição enviada pelo usuário:\n{identificador}\n\nProduto Deletado:\n{produto.objeto_limite_detalhado}"
+                f"Requisição enviada pelo usuário:\n{identificador}\n\nProduto Deletado:\n{produto.objeto_limite_detalhado()}"
             )
 
             self.listar()
@@ -252,10 +246,10 @@ class ControleProduto(ControleAbstrato):
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,
+                EntidadeNaoExistente,
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
@@ -285,9 +279,7 @@ class ControleProduto(ControleAbstrato):
         validacao_tipo(lista, dict)
 
         if produto is None:
-            produto = ProdutoConsumivel(lista.get("identificador"))
-            if lista.get("eh_perecivel"):
-                produto = ProdutoPerecivel(lista.get("identificador"))
+            produto = ProdutoPerecivel(lista.get("identificador"))
 
         validacao_tipo(propriedade=produto, tipo=ProdutoAbstrato)
 

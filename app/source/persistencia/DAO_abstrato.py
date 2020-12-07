@@ -32,7 +32,7 @@ class DAOAbstrato(ABC):
         try:
             return self.__cache[chave]
         except KeyError:
-            raise EntidadeNaoExistente
+            raise EntidadeNaoExistente()
 
     def get_one_or_none(self, chave: str):
         return self.__cache.get(chave)

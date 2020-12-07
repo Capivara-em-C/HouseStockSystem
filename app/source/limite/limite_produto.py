@@ -6,7 +6,7 @@ class LimiteProduto(LimiteAbstrato):
     CANCEL = "Voltar"
 
     def __init__(self):
-        super().__init__("Voltar")
+        super().__init__("Produtos")
 
     def listar(self, produtos: list or None = None):
         if produtos is None or not produtos:
@@ -51,6 +51,12 @@ class LimiteProduto(LimiteAbstrato):
         validacao_tipo(propriedade=produto, tipo=dict)
 
         self.__formulario(produto)
+
+        self.addRowToLayout([
+            Sg.SimpleButton(button_text="Categorias", key="categorias", size=(18, 8)),
+            Sg.Text(size=(1, 2)),
+            Sg.SimpleButton(button_text="Lotes", key="lotes", size=(18, 8)),
+        ])
 
         self.addRowToLayout([
             Sg.Cancel(button_text=self.CANCEL),
@@ -156,9 +162,6 @@ class LimiteProduto(LimiteAbstrato):
             Sg.Text(text="Estoque mínimo: "),
             Sg.InputText(key="estoque_minimo", default_text=produto.get("estoque_minimo"))
         ])
-
-        self.relacionamento_categoria(produto.get("categorias"))
-        self.relacionamento_lote(produto.get("lotes"))
 
     def relacionamento_categoria(self, categorias: list or None = None):
         if categorias is None or (isinstance(categorias, list) and len(categorias) < 1):

@@ -52,13 +52,11 @@ class ControleCategoria(ControleAbstrato):
                     return
 
             if botao == 'tabela':
-                botao = self.limite.tabela_opcoes()
+                botao = self.limite.tabela_opcoes().get('botao')
 
                 if botao is None:
                     self.listar()
                     return
-
-                botao = botao.get('botao')
 
             if botao in ("editar", "mostrar", "apagar"):
                 retorno = self.selecione_rota(rotas, botao, self.listar)(identificador)
@@ -146,7 +144,6 @@ class ControleCategoria(ControleAbstrato):
             self.atualizar_entidade(categoria, identificador)
 
             self.listar()
-
         except ValueError as err:
             self.limite.erro(
                 "Algum argumento passado foi do tipo errado[Número ou palavra]\n" +
@@ -159,7 +156,6 @@ class ControleCategoria(ControleAbstrato):
         ) as err:
             self.limite.erro(err)
             ControleRegistro.adiciona_registro(f"Erro {err}", format_exc())
-            self.listar()
         except (
                 RotaInexistenteException,
                 MetodoNaoPermitidoException,

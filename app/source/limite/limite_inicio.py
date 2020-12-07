@@ -11,6 +11,7 @@ class LimiteInicio(LimiteAbstrato):
             Sg.Text(size=(1, 2)),
             Sg.SimpleButton(button_text="Listagem de Categorias", key="categorias", size=(18, 8)),
         ])
+
         self.addRowToLayout([
             Sg.SimpleButton("Registros", key="registros", size=(41, 8))
         ])
